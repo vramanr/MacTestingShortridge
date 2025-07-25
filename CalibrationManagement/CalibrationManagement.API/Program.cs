@@ -16,6 +16,8 @@ builder.Services.AddScoped<ICalibrationCalculationService, CalibrationCalculatio
 builder.Services.AddScoped<ICompanyService, CompanyService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IToleranceService, ToleranceService>();
+builder.Services.AddScoped<IReportGenerationService, ReportGenerationService>();
+builder.Services.AddScoped<IVfpBusinessLogicService, VfpBusinessLogicService>();
 
 builder.Services.AddControllers();
 
