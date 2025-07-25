@@ -1,0 +1,598 @@
+<div class="calibration-admin-container">
+  <mat-card class="management-card">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>precision_manufacturing</mat-icon>
+        Calibration Administration
+      </mat-card-title>
+      <mat-card-subtitle>
+        Manage calibration setup, types, modes, standards, and technicians
+      </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <mat-tab-group [(selectedIndex)]="selectedTabIndex">
+        <!-- Calibration Setup Tab -->
+        <mat-tab label="Calibration Setup">
+          <div class="tab-content">
+            <div class="admin-section">
+              <div class="section-header">
+                <h3>Calibration System Configuration</h3>
+                <p>Configure calibration parameters and system settings</p>
+              </div>
+              
+              <div class="add-form">
+                <mat-card class="form-card">
+                  <mat-card-header>
+                    <mat-card-title>Add New Setting</mat-card-title>
+                  </mat-card-header>
+                  <mat-card-content>
+                    <form [formGroup]="setupForm" (ngSubmit)="addSetup()">
+                      <div class="form-row">
+                        <mat-form-field appearance="outline">
+                          <mat-label>Setting Name</mat-label>
+                          <input matInput formControlName="settingName" placeholder="Default Calibration Interval">
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                          <mat-label>Description</mat-label>
+                          <input matInput formControlName="description" placeholder="Setting description">
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                          <mat-label>Category</mat-label>
+                          <mat-select formControlName="category">
+                            <mat-option value="Scheduling">Scheduling</mat-option>
+                            <mat-option value="Units">Units</mat-option>
+                            <mat-option value="Automation">Automation</mat-option>
+                            <mat-option value="Documentation">Documentation</mat-option>
+                            <mat-option value="Quality">Quality</mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                      </div>
+                      <div class="form-row">
+                        <mat-form-field appearance="outline">
+                          <mat-label>Data Type</mat-label>
+                          <mat-select formControlName="dataType">
+                            <mat-option value="text">Text</mat-option>
+                            <mat-option value="number">Number</mat-option>
+                            <mat-option value="boolean">Boolean</mat-option>
+                            <mat-option value="select">Select</mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                          <mat-label>Value</mat-label>
+                          <input matInput formControlName="value" placeholder="Setting value">
+                        </mat-form-field>
+                        <div class="checkbox-field">
+                          <mat-checkbox formControlName="isRequired">Required</mat-checkbox>
+                        </div>
+                      </div>
+                      <div class="form-actions">
+                        <button mat-raised-button color="primary" type="submit" [disabled]="setupForm.invalid">
+                          <mat-icon>add</mat-icon>
+                          Add Setting
+                        </button>
+                      </div>
+                    </form>
+                  </mat-card-content>
+                </mat-card>
+              </div>
+
+              <div class="table-container">
+                <table mat-table [dataSource]="calibrationSetups" class="data-table">
+                  <ng-container matColumnDef="settingName">
+                    <th mat-header-cell *matHeaderCellDef>Setting Name</th>
+                    <td mat-cell *matCellDef="let setup">
+                      <strong>{{ setup.settingName }}</strong>
+                      <br>
+                      <small>{{ setup.description }}</small>
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="value">
+                    <th mat-header-cell *matHeaderCellDef>Value</th>
+                    <td mat-cell *matCellDef="let setup">{{ setup.value }}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="category">
+                    <th mat-header-cell *matHeaderCellDef>Category</th>
+                    <td mat-cell *matCellDef="let setup">{{ setup.category }}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="isRequired">
+                    <th mat-header-cell *matHeaderCellDef>Required</th>
+                    <td mat-cell *matCellDef="let setup">
+                      <span class="status-badge" [class]="setup.isRequired ? 'status-required' : 'status-optional'">
+                        {{ setup.isRequired ? 'Required' : 'Optional' }}
+                      </span>
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef>Actions</th>
+                    <td mat-cell *matCellDef="let setup">
+                      <button mat-icon-button (click)="editSetup(setup)" matTooltip="Edit Setting">
+                        <mat-icon>edit</mat-icon>
+                      </button>
+                    </td>
+                  </ng-container>
+
+                  <tr mat-header-row *matHeaderRowDef="setupColumns"></tr>
+                  <tr mat-row *matRowDef="let row; columns: setupColumns;"></tr>
+                </table>
+              </div>
+            </div>
+          </div>
+        </mat-tab>
+
+        <!-- Calibration Types Tab -->
+        <mat-tab label="Calibration Types">
+          <div class="tab-content">
+            <div class="admin-section">
+              <div class="section-header">
+                <h3>Calibration Type Management</h3>
+                <p>Define calibration types and their default parameters</p>
+              </div>
+              
+              <div class="add-form">
+                <mat-card class="form-card">
+                  <mat-card-header>
+                    <mat-card-title>Add New Calibration Type</mat-card-title>
+                  </mat-card-header>
+                  <mat-card-content>
+                    <form [formGroup]="typeForm" (ngSubmit)="addType()">
+                      <div class="form-row">
+                        <mat-form-field appearance="outline">
+                          <mat-label>Type Code</mat-label>
+                          <input matInput formControlName="typeCode" placeholder="VOLT">
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                          <mat-label>Type Name</mat-label>
+                          <input matInput formControlName="typeName" placeholder="Voltage Calibration">
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                          <mat-label>Category</mat-label>
+                          <mat-select formControlName="category">
+                            <mat-option value="Electrical">Electrical</mat-option>
+                            <mat-option value="Environmental">Environmental</mat-option>
+                            <mat-option value="Mechanical">Mechanical</mat-option>
+                            <mat-option value="Dimensional">Dimensional</mat-option>
+                            <mat-option value="Chemical">Chemical</mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                      </div>
+                      <div class="form-row">
+                        <mat-form-field appearance="outline">
+                          <mat-label>Description</mat-label>
+                          <input matInput formControlName="description" placeholder="Type description">
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                          <mat-label>Default Tolerance (%)</mat-label>
+                          <input matInput type="number" formControlName="defaultTolerance" placeholder="0.01">
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                          <mat-label>Units</mat-label>
+                          <input matInput formControlName="units" placeholder="Volts">
+                        </mat-form-field>
+                      </div>
+                      <div class="form-actions">
+                        <mat-checkbox formControlName="isActive">Active</mat-checkbox>
+                        <button mat-raised-button color="primary" type="submit" [disabled]="typeForm.invalid">
+                          <mat-icon>add</mat-icon>
+                          Add Type
+                        </button>
+                      </div>
+                    </form>
+                  </mat-card-content>
+                </mat-card>
+              </div>
+
+              <div class="table-container">
+                <table mat-table [dataSource]="calibrationTypes" class="data-table">
+                  <ng-container matColumnDef="typeCode">
+                    <th mat-header-cell *matHeaderCellDef>Type Code</th>
+                    <td mat-cell *matCellDef="let type">
+                      <strong>{{ type.typeCode }}</strong>
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="typeName">
+                    <th mat-header-cell *matHeaderCellDef>Type Name</th>
+                    <td mat-cell *matCellDef="let type">
+                      {{ type.typeName }}
+                      <br>
+                      <small>{{ type.description }}</small>
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="defaultTolerance">
+                    <th mat-header-cell *matHeaderCellDef>Default Tolerance</th>
+                    <td mat-cell *matCellDef="let type">{{ type.defaultTolerance }}%</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="units">
+                    <th mat-header-cell *matHeaderCellDef>Units</th>
+                    <td mat-cell *matCellDef="let type">{{ type.units }}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="category">
+                    <th mat-header-cell *matHeaderCellDef>Category</th>
+                    <td mat-cell *matCellDef="let type">{{ type.category }}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="isActive">
+                    <th mat-header-cell *matHeaderCellDef>Status</th>
+                    <td mat-cell *matCellDef="let type">
+                      <span class="status-badge" [class]="type.isActive ? 'status-active' : 'status-inactive'">
+                        {{ type.isActive ? 'Active' : 'Inactive' }}
+                      </span>
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef>Actions</th>
+                    <td mat-cell *matCellDef="let type">
+                      <button mat-icon-button (click)="editType(type)" matTooltip="Edit Type">
+                        <mat-icon>edit</mat-icon>
+                      </button>
+                    </td>
+                  </ng-container>
+
+                  <tr mat-header-row *matHeaderRowDef="typeColumns"></tr>
+                  <tr mat-row *matRowDef="let row; columns: typeColumns;"></tr>
+                </table>
+              </div>
+            </div>
+          </div>
+        </mat-tab>
+
+        <!-- Calibration Modes Tab -->
+        <mat-tab label="Calibration Modes">
+          <div class="tab-content">
+            <div class="admin-section">
+              <div class="section-header">
+                <h3>Calibration Mode Configuration</h3>
+                <p>Define calibration modes and procedures</p>
+              </div>
+              
+              <div class="add-form">
+                <mat-card class="form-card">
+                  <mat-card-header>
+                    <mat-card-title>Add New Calibration Mode</mat-card-title>
+                  </mat-card-header>
+                  <mat-card-content>
+                    <form [formGroup]="modeForm" (ngSubmit)="addMode()">
+                      <div class="form-row">
+                        <mat-form-field appearance="outline">
+                          <mat-label>Mode Code</mat-label>
+                          <input matInput formControlName="modeCode" placeholder="STD">
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                          <mat-label>Mode Name</mat-label>
+                          <input matInput formControlName="modeName" placeholder="Standard Calibration">
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                          <mat-label>Description</mat-label>
+                          <input matInput formControlName="description" placeholder="Mode description">
+                        </mat-form-field>
+                      </div>
+                      <div class="form-actions">
+                        <mat-checkbox formControlName="isActive">Active</mat-checkbox>
+                        <button mat-raised-button color="primary" type="submit" [disabled]="modeForm.invalid">
+                          <mat-icon>add</mat-icon>
+                          Add Mode
+                        </button>
+                      </div>
+                    </form>
+                  </mat-card-content>
+                </mat-card>
+              </div>
+
+              <div class="table-container">
+                <table mat-table [dataSource]="calibrationModes" class="data-table">
+                  <ng-container matColumnDef="modeCode">
+                    <th mat-header-cell *matHeaderCellDef>Mode Code</th>
+                    <td mat-cell *matCellDef="let mode">
+                      <strong>{{ mode.modeCode }}</strong>
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="modeName">
+                    <th mat-header-cell *matHeaderCellDef>Mode Name</th>
+                    <td mat-cell *matCellDef="let mode">{{ mode.modeName }}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="description">
+                    <th mat-header-cell *matHeaderCellDef>Description</th>
+                    <td mat-cell *matCellDef="let mode">{{ mode.description }}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="isActive">
+                    <th mat-header-cell *matHeaderCellDef>Status</th>
+                    <td mat-cell *matCellDef="let mode">
+                      <span class="status-badge" [class]="mode.isActive ? 'status-active' : 'status-inactive'">
+                        {{ mode.isActive ? 'Active' : 'Inactive' }}
+                      </span>
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef>Actions</th>
+                    <td mat-cell *matCellDef="let mode">
+                      <button mat-icon-button (click)="editMode(mode)" matTooltip="Edit Mode">
+                        <mat-icon>edit</mat-icon>
+                      </button>
+                    </td>
+                  </ng-container>
+
+                  <tr mat-header-row *matHeaderRowDef="modeColumns"></tr>
+                  <tr mat-row *matRowDef="let row; columns: modeColumns;"></tr>
+                </table>
+              </div>
+            </div>
+          </div>
+        </mat-tab>
+
+        <!-- Standards Management Tab -->
+        <mat-tab label="Standards Management">
+          <div class="tab-content">
+            <div class="admin-section">
+              <div class="section-header">
+                <h3>Calibration Standards Management</h3>
+                <p>Manage calibration standards and equipment inventory</p>
+              </div>
+              
+              <div class="add-form">
+                <mat-card class="form-card">
+                  <mat-card-header>
+                    <mat-card-title>Add New Standard</mat-card-title>
+                  </mat-card-header>
+                  <mat-card-content>
+                    <form [formGroup]="standardForm" (ngSubmit)="addStandard()">
+                      <div class="form-row">
+                        <mat-form-field appearance="outline">
+                          <mat-label>Standard ID</mat-label>
+                          <input matInput formControlName="standardId" placeholder="STD-VOLT-001">
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                          <mat-label>Description</mat-label>
+                          <input matInput formControlName="description" placeholder="Precision Voltage Standard">
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                          <mat-label>Manufacturer</mat-label>
+                          <input matInput formControlName="manufacturer" placeholder="Fluke">
+                        </mat-form-field>
+                      </div>
+                      <div class="form-row">
+                        <mat-form-field appearance="outline">
+                          <mat-label>Model</mat-label>
+                          <input matInput formControlName="model" placeholder="5720A">
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                          <mat-label>Serial Number</mat-label>
+                          <input matInput formControlName="serialNumber" placeholder="FL123456">
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                          <mat-label>Accuracy</mat-label>
+                          <input matInput formControlName="accuracy" placeholder="±0.001%">
+                        </mat-form-field>
+                      </div>
+                      <div class="form-row">
+                        <mat-form-field appearance="outline">
+                          <mat-label>Calibration Date</mat-label>
+                          <input matInput type="date" formControlName="calibrationDate">
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                          <mat-label>Due Date</mat-label>
+                          <input matInput type="date" formControlName="dueDate">
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                          <mat-label>Location</mat-label>
+                          <input matInput formControlName="location" placeholder="Lab A - Shelf 1">
+                        </mat-form-field>
+                      </div>
+                      <div class="form-actions">
+                        <button mat-raised-button color="primary" type="submit" [disabled]="standardForm.invalid">
+                          <mat-icon>add</mat-icon>
+                          Add Standard
+                        </button>
+                      </div>
+                    </form>
+                  </mat-card-content>
+                </mat-card>
+              </div>
+
+              <div class="table-container">
+                <table mat-table [dataSource]="calibrationStandards" class="data-table">
+                  <ng-container matColumnDef="standardId">
+                    <th mat-header-cell *matHeaderCellDef>Standard ID</th>
+                    <td mat-cell *matCellDef="let standard">
+                      <strong>{{ standard.standardId }}</strong>
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="description">
+                    <th mat-header-cell *matHeaderCellDef>Description</th>
+                    <td mat-cell *matCellDef="let standard">
+                      {{ standard.description }}
+                      <br>
+                      <small>{{ standard.manufacturer }} {{ standard.model }}</small>
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="manufacturer">
+                    <th mat-header-cell *matHeaderCellDef>Manufacturer</th>
+                    <td mat-cell *matCellDef="let standard">{{ standard.manufacturer }}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="calibrationDate">
+                    <th mat-header-cell *matHeaderCellDef>Cal Date</th>
+                    <td mat-cell *matCellDef="let standard">{{ standard.calibrationDate | date:'short' }}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="dueDate">
+                    <th mat-header-cell *matHeaderCellDef>Due Date</th>
+                    <td mat-cell *matCellDef="let standard">
+                      {{ standard.dueDate | date:'short' }}
+                      <br>
+                      <small [class]="getDaysUntilDue(standard.dueDate) < 30 ? 'due-soon' : ''">
+                        {{ getDaysUntilDue(standard.dueDate) }} days
+                      </small>
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="status">
+                    <th mat-header-cell *matHeaderCellDef>Status</th>
+                    <td mat-cell *matCellDef="let standard">
+                      <span class="status-badge" [class]="'status-' + standard.status.toLowerCase()">
+                        {{ standard.status }}
+                      </span>
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef>Actions</th>
+                    <td mat-cell *matCellDef="let standard">
+                      <button mat-icon-button (click)="editStandard(standard)" matTooltip="Edit Standard">
+                        <mat-icon>edit</mat-icon>
+                      </button>
+                    </td>
+                  </ng-container>
+
+                  <tr mat-header-row *matHeaderRowDef="standardColumns"></tr>
+                  <tr mat-row *matRowDef="let row; columns: standardColumns;"></tr>
+                </table>
+              </div>
+            </div>
+          </div>
+        </mat-tab>
+
+        <!-- Technician Administration Tab -->
+        <mat-tab label="Technician Administration">
+          <div class="tab-content">
+            <div class="admin-section">
+              <div class="section-header">
+                <h3>Calibration Technician Management</h3>
+                <p>Manage technician profiles and certifications</p>
+              </div>
+              
+              <div class="add-form">
+                <mat-card class="form-card">
+                  <mat-card-header>
+                    <mat-card-title>Add New Technician</mat-card-title>
+                  </mat-card-header>
+                  <mat-card-content>
+                    <form [formGroup]="technicianForm" (ngSubmit)="addTechnician()">
+                      <div class="form-row">
+                        <mat-form-field appearance="outline">
+                          <mat-label>Technician ID</mat-label>
+                          <input matInput formControlName="techId" placeholder="TECH001">
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                          <mat-label>First Name</mat-label>
+                          <input matInput formControlName="firstName" placeholder="John">
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                          <mat-label>Last Name</mat-label>
+                          <input matInput formControlName="lastName" placeholder="Smith">
+                        </mat-form-field>
+                      </div>
+                      <div class="form-row">
+                        <mat-form-field appearance="outline">
+                          <mat-label>Email</mat-label>
+                          <input matInput type="email" formControlName="email" placeholder="john.smith@company.com">
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                          <mat-label>Phone</mat-label>
+                          <input matInput formControlName="phone" placeholder="(555) 123-4567">
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                          <mat-label>Hire Date</mat-label>
+                          <input matInput type="date" formControlName="hireDate">
+                        </mat-form-field>
+                      </div>
+                      <div class="form-actions">
+                        <mat-checkbox formControlName="isActive">Active</mat-checkbox>
+                        <button mat-raised-button color="primary" type="submit" [disabled]="technicianForm.invalid">
+                          <mat-icon>add</mat-icon>
+                          Add Technician
+                        </button>
+                      </div>
+                    </form>
+                  </mat-card-content>
+                </mat-card>
+              </div>
+
+              <div class="table-container">
+                <table mat-table [dataSource]="calibrationTechnicians" class="data-table">
+                  <ng-container matColumnDef="techId">
+                    <th mat-header-cell *matHeaderCellDef>Tech ID</th>
+                    <td mat-cell *matCellDef="let technician">
+                      <strong>{{ technician.techId }}</strong>
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="name">
+                    <th mat-header-cell *matHeaderCellDef>Name</th>
+                    <td mat-cell *matCellDef="let technician">
+                      {{ getTechnicianName(technician) }}
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="email">
+                    <th mat-header-cell *matHeaderCellDef>Email</th>
+                    <td mat-cell *matCellDef="let technician">{{ technician.email }}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="certifications">
+                    <th mat-header-cell *matHeaderCellDef>Certifications</th>
+                    <td mat-cell *matCellDef="let technician">
+                      <div class="certifications-list">
+                        <mat-chip-set *ngIf="technician.certifications.length > 0">
+                          <mat-chip *ngFor="let cert of technician.certifications">{{ cert }}</mat-chip>
+                        </mat-chip-set>
+                        <span *ngIf="technician.certifications.length === 0" class="no-data">No certifications</span>
+                      </div>
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="specialties">
+                    <th mat-header-cell *matHeaderCellDef>Specialties</th>
+                    <td mat-cell *matCellDef="let technician">
+                      <div class="specialties-list">
+                        <mat-chip-set *ngIf="technician.specialties.length > 0">
+                          <mat-chip *ngFor="let specialty of technician.specialties">{{ specialty }}</mat-chip>
+                        </mat-chip-set>
+                        <span *ngIf="technician.specialties.length === 0" class="no-data">No specialties</span>
+                      </div>
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="isActive">
+                    <th mat-header-cell *matHeaderCellDef>Status</th>
+                    <td mat-cell *matCellDef="let technician">
+                      <span class="status-badge" [class]="technician.isActive ? 'status-active' : 'status-inactive'">
+                        {{ technician.isActive ? 'Active' : 'Inactive' }}
+                      </span>
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef>Actions</th>
+                    <td mat-cell *matCellDef="let technician">
+                      <button mat-icon-button (click)="editTechnician(technician)" matTooltip="Edit Technician">
+                        <mat-icon>edit</mat-icon>
+                      </button>
+                    </td>
+                  </ng-container>
+
+                  <tr mat-header-row *matHeaderRowDef="technicianColumns"></tr>
+                  <tr mat-row *matRowDef="let row; columns: technicianColumns;"></tr>
+                </table>
+              </div>
+            </div>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+    </mat-card-content>
+  </mat-card>
+</div>

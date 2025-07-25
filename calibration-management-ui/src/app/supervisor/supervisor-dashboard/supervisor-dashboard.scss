@@ -1,0 +1,152 @@
+.supervisor-dashboard-container {
+  padding: 24px;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.dashboard-card {
+  width: 100%;
+}
+
+.modules-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 24px;
+  margin-top: 24px;
+}
+
+.module-card {
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  border-left: 4px solid transparent;
+  min-height: 300px;
+}
+
+.module-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+}
+
+.module-card.module-application {
+  border-left-color: #1976d2;
+}
+
+.module-card.module-calibration {
+  border-left-color: #7b1fa2;
+}
+
+.module-card.module-codes {
+  border-left-color: #388e3c;
+}
+
+.module-card.module-parts {
+  border-left-color: #f57c00;
+}
+
+.module-card.module-process {
+  border-left-color: #d32f2f;
+}
+
+.module-card.module-reports {
+  border-left-color: #303f9f;
+}
+
+.module-avatar {
+  background-color: #f5f5f5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.module-avatar mat-icon {
+  font-size: 32px;
+  width: 32px;
+  height: 32px;
+}
+
+.sub-modules {
+  margin-top: 16px;
+}
+
+.sub-modules h4 {
+  margin: 0 0 12px 0;
+  color: #666;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.sub-module-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.sub-module-button {
+  font-size: 0.8rem;
+  padding: 4px 12px;
+  min-width: auto;
+  height: 32px;
+  border-radius: 16px;
+}
+
+.sub-module-button:hover {
+  background-color: #f5f5f5;
+}
+
+mat-card-header mat-card-title {
+  font-size: 1.2rem;
+  font-weight: 500;
+  color: #333;
+}
+
+mat-card-header mat-card-subtitle {
+  font-size: 0.9rem;
+  color: #666;
+  margin-top: 4px;
+}
+
+mat-card-actions {
+  padding: 8px 16px 16px 16px;
+}
+
+@media (max-width: 768px) {
+  .supervisor-dashboard-container {
+    padding: 16px;
+  }
+  
+  .modules-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .module-card {
+    min-height: auto;
+  }
+  
+  .sub-module-list {
+    flex-direction: column;
+  }
+  
+  .sub-module-button {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 480px) {
+  .module-avatar mat-icon {
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+  }
+  
+  mat-card-header mat-card-title {
+    font-size: 1.1rem;
+  }
+  
+  mat-card-header mat-card-subtitle {
+    font-size: 0.8rem;
+  }
+}

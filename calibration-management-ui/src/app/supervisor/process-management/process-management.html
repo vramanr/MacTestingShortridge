@@ -1,0 +1,373 @@
+<div class="process-management-container">
+  <mat-card class="management-card">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>build</mat-icon>
+        Process Management
+      </mat-card-title>
+      <mat-card-subtitle>
+        System maintenance, data management, and cleanup operations
+      </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <!-- Processing Indicator -->
+      <div *ngIf="isProcessing" class="processing-indicator">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+        <p>{{ processingMessage }}</p>
+      </div>
+
+      <mat-tab-group [(selectedIndex)]="selectedTabIndex">
+        <!-- Change Numbers Tab -->
+        <mat-tab label="Change Numbers">
+          <div class="tab-content">
+            <div class="process-section">
+              <div class="section-header">
+                <h3>Number Sequence Management</h3>
+                <p>Modify system numbering sequences for calibrations, orders, and certificates</p>
+              </div>
+              
+              <div class="add-form">
+                <mat-card class="form-card">
+                  <mat-card-header>
+                    <mat-card-title>Add New Number Sequence</mat-card-title>
+                  </mat-card-header>
+                  <mat-card-content>
+                    <form [formGroup]="numberForm" (ngSubmit)="addNumberSequence()">
+                      <div class="form-row">
+                        <mat-form-field appearance="outline">
+                          <mat-label>Sequence Name</mat-label>
+                          <input matInput formControlName="sequenceName" placeholder="Calibration ID">
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                          <mat-label>Description</mat-label>
+                          <input matInput formControlName="description" placeholder="Sequential numbering description">
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                          <mat-label>Current Value</mat-label>
+                          <input matInput type="number" formControlName="currentValue" placeholder="1">
+                        </mat-form-field>
+                      </div>
+                      <div class="form-row">
+                        <mat-form-field appearance="outline">
+                          <mat-label>Prefix</mat-label>
+                          <input matInput formControlName="prefix" placeholder="CAL">
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                          <mat-label>Suffix</mat-label>
+                          <input matInput formControlName="suffix" placeholder="">
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                          <mat-label>Minimum Length</mat-label>
+                          <input matInput type="number" formControlName="minLength" placeholder="4">
+                        </mat-form-field>
+                      </div>
+                      <div class="form-actions">
+                        <mat-checkbox formControlName="isActive">Active</mat-checkbox>
+                        <button mat-raised-button color="primary" type="submit" [disabled]="numberForm.invalid">
+                          <mat-icon>add</mat-icon>
+                          Add Sequence
+                        </button>
+                      </div>
+                    </form>
+                  </mat-card-content>
+                </mat-card>
+              </div>
+
+              <div class="table-container">
+                <table mat-table [dataSource]="numberSequences" class="data-table">
+                  <ng-container matColumnDef="sequenceName">
+                    <th mat-header-cell *matHeaderCellDef>Sequence Name</th>
+                    <td mat-cell *matCellDef="let sequence">
+                      <strong>{{ sequence.sequenceName }}</strong>
+                      <br>
+                      <small>{{ sequence.description }}</small>
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="currentValue">
+                    <th mat-header-cell *matHeaderCellDef>Current Value</th>
+                    <td mat-cell *matCellDef="let sequence">
+                      <div class="number-display">
+                        <span class="current-number">{{ sequence.currentValue }}</span>
+                        <br>
+                        <small class="formatted-example">Next: {{ getFormattedNumber(sequence) }}</small>
+                      </div>
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="prefix">
+                    <th mat-header-cell *matHeaderCellDef>Prefix</th>
+                    <td mat-cell *matCellDef="let sequence">{{ sequence.prefix || '-' }}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="suffix">
+                    <th mat-header-cell *matHeaderCellDef>Suffix</th>
+                    <td mat-cell *matCellDef="let sequence">{{ sequence.suffix || '-' }}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="isActive">
+                    <th mat-header-cell *matHeaderCellDef>Status</th>
+                    <td mat-cell *matCellDef="let sequence">
+                      <span class="status-badge" [class]="sequence.isActive ? 'status-active' : 'status-inactive'">
+                        {{ sequence.isActive ? 'Active' : 'Inactive' }}
+                      </span>
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef>Actions</th>
+                    <td mat-cell *matCellDef="let sequence">
+                      <button mat-icon-button (click)="editNumberSequence(sequence)" matTooltip="Edit Sequence">
+                        <mat-icon>edit</mat-icon>
+                      </button>
+                      <button mat-icon-button (click)="resetNumberSequence(sequence)" matTooltip="Reset to 1" color="accent">
+                        <mat-icon>refresh</mat-icon>
+                      </button>
+                      <button mat-icon-button (click)="toggleSequenceStatus(sequence)" 
+                              [matTooltip]="sequence.isActive ? 'Deactivate' : 'Activate'">
+                        <mat-icon>{{ sequence.isActive ? 'toggle_on' : 'toggle_off' }}</mat-icon>
+                      </button>
+                    </td>
+                  </ng-container>
+
+                  <tr mat-header-row *matHeaderRowDef="numberColumns"></tr>
+                  <tr mat-row *matRowDef="let row; columns: numberColumns;"></tr>
+                </table>
+              </div>
+            </div>
+          </div>
+        </mat-tab>
+
+        <!-- Pack Database/Tables Tab -->
+        <mat-tab label="Pack Database/Tables">
+          <div class="tab-content">
+            <div class="process-section">
+              <div class="section-header">
+                <h3>Database Table Optimization</h3>
+                <p>Optimize and compact database tables to improve performance</p>
+              </div>
+
+              <div class="actions-bar">
+                <button mat-raised-button color="primary" (click)="packAllTables()" [disabled]="isProcessing">
+                  <mat-icon>build</mat-icon>
+                  Pack All Tables
+                </button>
+              </div>
+
+              <div class="table-container">
+                <table mat-table [dataSource]="databaseTables" class="data-table">
+                  <ng-container matColumnDef="name">
+                    <th mat-header-cell *matHeaderCellDef>Table Name</th>
+                    <td mat-cell *matCellDef="let table">
+                      <strong>{{ table.name }}</strong>
+                      <br>
+                      <small>{{ table.description }}</small>
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="recordCount">
+                    <th mat-header-cell *matHeaderCellDef>Records</th>
+                    <td mat-cell *matCellDef="let table">{{ table.recordCount | number }}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="size">
+                    <th mat-header-cell *matHeaderCellDef>Size</th>
+                    <td mat-cell *matCellDef="let table">{{ table.size }}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="lastPacked">
+                    <th mat-header-cell *matHeaderCellDef>Last Packed</th>
+                    <td mat-cell *matCellDef="let table">{{ table.lastPacked | date:'short' }}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="status">
+                    <th mat-header-cell *matHeaderCellDef>Status</th>
+                    <td mat-cell *matCellDef="let table">
+                      <span class="status-badge" [class]="'status-' + table.status.toLowerCase().replace(' ', '-')">
+                        {{ table.status }}
+                      </span>
+                      <mat-icon *ngIf="table.needsPacking" class="warning-icon" color="warn">warning</mat-icon>
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef>Actions</th>
+                    <td mat-cell *matCellDef="let table">
+                      <button mat-raised-button 
+                              [color]="table.needsPacking ? 'accent' : 'primary'"
+                              (click)="packTable(table)" 
+                              [disabled]="isProcessing"
+                              [matTooltip]="table.needsPacking ? 'Needs packing' : 'Pack table'">
+                        <mat-icon>build</mat-icon>
+                        Pack Table
+                      </button>
+                    </td>
+                  </ng-container>
+
+                  <tr mat-header-row *matHeaderRowDef="tableColumns"></tr>
+                  <tr mat-row *matRowDef="let row; columns: tableColumns;"></tr>
+                </table>
+              </div>
+            </div>
+          </div>
+        </mat-tab>
+
+        <!-- Delete Orders Tab -->
+        <mat-tab label="Delete Orders">
+          <div class="tab-content">
+            <div class="process-section">
+              <div class="section-header">
+                <h3>Order Cleanup Management</h3>
+                <p>Remove obsolete order records to maintain database efficiency</p>
+              </div>
+
+              <div class="actions-bar">
+                <button mat-raised-button color="warn" (click)="deleteSelectedOrders()" [disabled]="isProcessing">
+                  <mat-icon>delete_sweep</mat-icon>
+                  Delete All Eligible Orders
+                </button>
+              </div>
+
+              <div class="table-container">
+                <table mat-table [dataSource]="orderCleanups" class="data-table">
+                  <ng-container matColumnDef="orderNumber">
+                    <th mat-header-cell *matHeaderCellDef>Order Number</th>
+                    <td mat-cell *matCellDef="let order">
+                      <strong>{{ order.orderNumber }}</strong>
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="companyName">
+                    <th mat-header-cell *matHeaderCellDef>Company</th>
+                    <td mat-cell *matCellDef="let order">{{ order.companyName }}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="orderDate">
+                    <th mat-header-cell *matHeaderCellDef>Order Date</th>
+                    <td mat-cell *matCellDef="let order">{{ order.orderDate | date:'short' }}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="status">
+                    <th mat-header-cell *matHeaderCellDef>Status</th>
+                    <td mat-cell *matCellDef="let order">{{ order.status }}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="totalAmount">
+                    <th mat-header-cell *matHeaderCellDef>Total Amount</th>
+                    <td mat-cell *matCellDef="let order">{{ formatCurrency(order.totalAmount) }}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="canDelete">
+                    <th mat-header-cell *matHeaderCellDef>Eligible for Deletion</th>
+                    <td mat-cell *matCellDef="let order">
+                      <div class="deletion-status">
+                        <span class="status-badge" [class]="order.canDelete ? 'status-deletable' : 'status-protected'">
+                          {{ order.canDelete ? 'Yes' : 'No' }}
+                        </span>
+                        <br>
+                        <small>{{ order.reason }}</small>
+                      </div>
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef>Actions</th>
+                    <td mat-cell *matCellDef="let order">
+                      <button mat-raised-button 
+                              color="warn" 
+                              (click)="deleteOrder(order)" 
+                              [disabled]="!order.canDelete || isProcessing"
+                              matTooltip="Delete Order">
+                        <mat-icon>delete</mat-icon>
+                        Delete
+                      </button>
+                    </td>
+                  </ng-container>
+
+                  <tr mat-header-row *matHeaderRowDef="orderColumns"></tr>
+                  <tr mat-row *matRowDef="let row; columns: orderColumns;"></tr>
+                </table>
+              </div>
+            </div>
+          </div>
+        </mat-tab>
+
+        <!-- Duplicates Tab -->
+        <mat-tab label="Duplicates">
+          <div class="tab-content">
+            <div class="process-section">
+              <div class="section-header">
+                <h3>Duplicate Record Management</h3>
+                <p>Find and resolve duplicate records across database tables</p>
+              </div>
+
+              <div class="actions-bar">
+                <button mat-raised-button color="primary" (click)="scanForDuplicates()" [disabled]="isProcessing">
+                  <mat-icon>search</mat-icon>
+                  Scan for Duplicates
+                </button>
+              </div>
+
+              <div class="table-container">
+                <table mat-table [dataSource]="duplicateRecords" class="data-table">
+                  <ng-container matColumnDef="tableName">
+                    <th mat-header-cell *matHeaderCellDef>Table</th>
+                    <td mat-cell *matCellDef="let duplicate">
+                      <strong>{{ duplicate.tableName }}</strong>
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="recordType">
+                    <th mat-header-cell *matHeaderCellDef>Record Type</th>
+                    <td mat-cell *matCellDef="let duplicate">{{ duplicate.recordType }}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="duplicateCount">
+                    <th mat-header-cell *matHeaderCellDef>Duplicate Count</th>
+                    <td mat-cell *matCellDef="let duplicate">
+                      <span class="duplicate-count">{{ duplicate.duplicateCount }}</span>
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="description">
+                    <th mat-header-cell *matHeaderCellDef>Description</th>
+                    <td mat-cell *matCellDef="let duplicate">
+                      <div class="duplicate-description">
+                        <strong>{{ duplicate.primaryKey }}</strong>
+                        <br>
+                        <small>{{ duplicate.description }}</small>
+                      </div>
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="severity">
+                    <th mat-header-cell *matHeaderCellDef>Severity</th>
+                    <td mat-cell *matCellDef="let duplicate">
+                      <span class="severity-badge" [class]="'severity-' + duplicate.severity.toLowerCase()">
+                        {{ duplicate.severity }}
+                      </span>
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef>Actions</th>
+                    <td mat-cell *matCellDef="let duplicate">
+                      <button mat-raised-button color="primary" (click)="resolveDuplicate(duplicate)" matTooltip="Resolve Duplicate">
+                        <mat-icon>check</mat-icon>
+                        Resolve
+                      </button>
+                    </td>
+                  </ng-container>
+
+                  <tr mat-header-row *matHeaderRowDef="duplicateColumns"></tr>
+                  <tr mat-row *matRowDef="let row; columns: duplicateColumns;"></tr>
+                </table>
+              </div>
+            </div>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+    </mat-card-content>
+  </mat-card>
+</div>
