@@ -1,0 +1,183 @@
+<div class="calibration-entry-container">
+  <mat-card class="entry-card">
+    <mat-card-header>
+      <mat-card-title>
+        {{ isNoOrderMode ? 'No Order Calibration Entry' : 'Calibration Entry' }}
+        <span *ngIf="calibrationType" class="cal-type-badge">{{ calibrationType }}</span>
+      </mat-card-title>
+      <mat-card-subtitle>
+        {{ isNoOrderMode ? 'Enter calibration data without an order number' : 'Enter calibration data for an existing order' }}
+      </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <form [formGroup]="calibrationForm" (ngSubmit)="onSubmit()">
+        <!-- Order Information Section -->
+        <div class="form-section" *ngIf="!isNoOrderMode">
+          <h3>Order Information</h3>
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Order Number</mat-label>
+              <input matInput formControlName="orderNo" placeholder="Enter order number">
+              <button mat-icon-button matSuffix type="button" (click)="searchOrder()">
+                <mat-icon>search</mat-icon>
+              </button>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Company</mat-label>
+              <mat-select formControlName="coId">
+                <mat-option *ngFor="let company of companies" [value]="company.coId">
+                  {{ company.coName }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- Instrument Information Section -->
+        <div class="form-section">
+          <h3>Instrument Information</h3>
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Serial Number</mat-label>
+              <input matInput formControlName="serialNo" required>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Model Number</mat-label>
+              <input matInput formControlName="modelNo">
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Manufacturer</mat-label>
+              <input matInput formControlName="manufacturer">
+            </mat-form-field>
+          </div>
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Calibration Type</mat-label>
+              <mat-select formControlName="calType" required>
+                <mat-option value="ADM">ADM</mat-option>
+                <mat-option value="HDM">HDM</mat-option>
+                <mat-option value="MultiTemp">MultiTemp</mat-option>
+                <mat-option value="FH">FH</mat-option>
+                <mat-option value="Pressure">Pressure</mat-option>
+                <mat-option value="Temperature">Temperature</mat-option>
+                <mat-option value="Flow">Flow</mat-option>
+                <mat-option value="Electrical">Electrical</mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Calibration Mode</mat-label>
+              <mat-select formControlName="calMode">
+                <mat-option value="Standard">Standard</mat-option>
+                <mat-option value="Extended">Extended</mat-option>
+                <mat-option value="Quick">Quick</mat-option>
+                <mat-option value="Custom">Custom</mat-option>
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- Calibration Data Section -->
+        <div class="form-section">
+          <h3>Calibration Data</h3>
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Technician</mat-label>
+              <mat-select formControlName="techId" required>
+                <mat-option *ngFor="let tech of technicians" [value]="tech.techId">
+                  {{ tech.techName }}
+                </mat-option>
+              </mat-select>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Calibration Date</mat-label>
+              <input matInput [matDatepicker]="calDatePicker" formControlName="calDate" required>
+              <mat-datepicker-toggle matSuffix [for]="calDatePicker"></mat-datepicker-toggle>
+              <mat-datepicker #calDatePicker></mat-datepicker>
+            </mat-form-field>
+            <mat-form-field appearance="outline">
+              <mat-label>Due Date</mat-label>
+              <input matInput [matDatepicker]="dueDatePicker" formControlName="dueDate">
+              <mat-datepicker-toggle matSuffix [for]="dueDatePicker"></mat-datepicker-toggle>
+              <mat-datepicker #dueDatePicker></mat-datepicker>
+            </mat-form-field>
+          </div>
+        </div>
+
+        <!-- Measurement Points Section -->
+        <div class="form-section">
+          <h3>Measurement Points</h3>
+          <div class="measurement-points">
+            <div *ngFor="let point of measurementPoints; let i = index" class="measurement-point">
+              <h4>Point {{ i + 1 }}</h4>
+              <div class="form-row">
+                <mat-form-field appearance="outline">
+                  <mat-label>Set Point</mat-label>
+                  <input matInput type="number" [(ngModel)]="point.setPoint" [ngModelOptions]="{standalone: true}">
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                  <mat-label>Reading</mat-label>
+                  <input matInput type="number" [(ngModel)]="point.reading" [ngModelOptions]="{standalone: true}">
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                  <mat-label>Deviation</mat-label>
+                  <input matInput type="number" [(ngModel)]="point.deviation" [ngModelOptions]="{standalone: true}" readonly>
+                </mat-form-field>
+                <mat-form-field appearance="outline">
+                  <mat-label>Tolerance</mat-label>
+                  <input matInput type="number" [(ngModel)]="point.tolerance" [ngModelOptions]="{standalone: true}">
+                </mat-form-field>
+                <button mat-icon-button type="button" color="warn" (click)="removeMeasurementPoint(i)">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </div>
+            <button mat-stroked-button type="button" (click)="addMeasurementPoint()">
+              <mat-icon>add</mat-icon>
+              Add Measurement Point
+            </button>
+          </div>
+        </div>
+
+        <!-- Standards Used Section -->
+        <div class="form-section">
+          <h3>Standards Used</h3>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Select Standards</mat-label>
+            <mat-select formControlName="standardsUsed" multiple>
+              <mat-option *ngFor="let standard of availableStandards" [value]="standard.standardId">
+                {{ standard.description }} ({{ standard.serialNo }})
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+        <!-- Comments Section -->
+        <div class="form-section">
+          <h3>Comments</h3>
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Additional Comments</mat-label>
+            <textarea matInput formControlName="comments" rows="4"></textarea>
+          </mat-form-field>
+        </div>
+      </form>
+    </mat-card-content>
+
+    <mat-card-actions align="end">
+      <button mat-button type="button" (click)="onCancel()">
+        <mat-icon>close</mat-icon>
+        Cancel
+      </button>
+      <button mat-button type="button" (click)="onSaveDraft()">
+        <mat-icon>save</mat-icon>
+        Save Draft
+      </button>
+      <button mat-raised-button color="primary" 
+              [disabled]="!calibrationForm.valid"
+              (click)="onSubmit()">
+        <mat-icon>check</mat-icon>
+        Complete Calibration
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</div>

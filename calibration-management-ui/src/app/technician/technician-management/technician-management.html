@@ -1,0 +1,210 @@
+<div class="technician-management-container">
+  <mat-card class="management-card">
+    <mat-card-header>
+      <mat-card-title>Technician Management</mat-card-title>
+      <mat-card-subtitle>Manage calibration technicians and their certifications</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div class="actions-bar">
+        <button mat-raised-button color="primary" (click)="addTechnician()">
+          <mat-icon>add</mat-icon>
+          Add Technician
+        </button>
+        <div class="filter-controls">
+          <mat-form-field appearance="outline">
+            <mat-label>Filter by Status</mat-label>
+            <mat-select [(ngModel)]="selectedStatus" (ngModelChange)="filterTechnicians()">
+              <mat-option value="">All Status</mat-option>
+              <mat-option value="Active">Active</mat-option>
+              <mat-option value="Inactive">Inactive</mat-option>
+              <mat-option value="Training">Training</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Search Technicians</mat-label>
+            <input matInput [(ngModel)]="searchTerm" (ngModelChange)="filterTechnicians()">
+            <mat-icon matSuffix>search</mat-icon>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="technicians-table">
+        <mat-table [dataSource]="filteredTechnicians" class="data-table">
+          <ng-container matColumnDef="techId">
+            <mat-header-cell *matHeaderCellDef>Tech ID</mat-header-cell>
+            <mat-cell *matCellDef="let tech">{{ tech.techId }}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="techName">
+            <mat-header-cell *matHeaderCellDef>Name</mat-header-cell>
+            <mat-cell *matCellDef="let tech">{{ tech.techName }}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="email">
+            <mat-header-cell *matHeaderCellDef>Email</mat-header-cell>
+            <mat-cell *matCellDef="let tech">{{ tech.email }}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="phone">
+            <mat-header-cell *matHeaderCellDef>Phone</mat-header-cell>
+            <mat-cell *matCellDef="let tech">{{ tech.phone }}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="certifications">
+            <mat-header-cell *matHeaderCellDef>Certifications</mat-header-cell>
+            <mat-cell *matCellDef="let tech">
+              <div class="certification-chips">
+                <mat-chip *ngFor="let cert of tech.certifications" class="cert-chip">
+                  {{ cert }}
+                </mat-chip>
+              </div>
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="status">
+            <mat-header-cell *matHeaderCellDef>Status</mat-header-cell>
+            <mat-cell *matCellDef="let tech">
+              <mat-chip [color]="getStatusColor(tech.status)">{{ tech.status }}</mat-chip>
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="lastActive">
+            <mat-header-cell *matHeaderCellDef>Last Active</mat-header-cell>
+            <mat-cell *matCellDef="let tech">{{ tech.lastActive | date:'short' }}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+            <mat-cell *matCellDef="let tech">
+              <button mat-icon-button color="primary" (click)="editTechnician(tech)" matTooltip="Edit Technician">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button color="accent" (click)="viewCertifications(tech)" matTooltip="View Certifications">
+                <mat-icon>verified</mat-icon>
+              </button>
+              <button mat-icon-button (click)="viewCalibrations(tech)" matTooltip="View Calibrations">
+                <mat-icon>assignment</mat-icon>
+              </button>
+              <button mat-icon-button [color]="tech.status === 'Active' ? 'warn' : 'primary'" 
+                      (click)="toggleStatus(tech)" 
+                      [matTooltip]="tech.status === 'Active' ? 'Deactivate' : 'Activate'">
+                <mat-icon>{{ tech.status === 'Active' ? 'person_off' : 'person' }}</mat-icon>
+              </button>
+            </mat-cell>
+          </ng-container>
+
+          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;" 
+                   (click)="selectTechnician(row)" 
+                   [class.selected]="selectedTechnician?.techId === row.techId"></mat-row>
+        </mat-table>
+      </div>
+
+      <!-- Technician Details Panel -->
+      <mat-expansion-panel *ngIf="selectedTechnician" class="details-panel">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Technician Details: {{ selectedTechnician.techName }}
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        
+        <div class="technician-details">
+          <div class="detail-grid">
+            <div class="detail-section">
+              <h4>Personal Information</h4>
+              <div class="detail-item">
+                <label>Tech ID:</label>
+                <span>{{ selectedTechnician.techId }}</span>
+              </div>
+              <div class="detail-item">
+                <label>Full Name:</label>
+                <span>{{ selectedTechnician.techName }}</span>
+              </div>
+              <div class="detail-item">
+                <label>Email:</label>
+                <span>{{ selectedTechnician.email }}</span>
+              </div>
+              <div class="detail-item">
+                <label>Phone:</label>
+                <span>{{ selectedTechnician.phone }}</span>
+              </div>
+              <div class="detail-item">
+                <label>Department:</label>
+                <span>{{ selectedTechnician.department || 'N/A' }}</span>
+              </div>
+            </div>
+
+            <div class="detail-section">
+              <h4>Employment Details</h4>
+              <div class="detail-item">
+                <label>Status:</label>
+                <span>{{ selectedTechnician.status }}</span>
+              </div>
+              <div class="detail-item">
+                <label>Hire Date:</label>
+                <span>{{ selectedTechnician.hireDate | date:'medium' }}</span>
+              </div>
+              <div class="detail-item">
+                <label>Last Active:</label>
+                <span>{{ selectedTechnician.lastActive | date:'medium' }}</span>
+              </div>
+              <div class="detail-item">
+                <label>Supervisor:</label>
+                <span>{{ selectedTechnician.supervisor || 'N/A' }}</span>
+              </div>
+            </div>
+
+            <div class="detail-section">
+              <h4>Performance Metrics</h4>
+              <div class="detail-item">
+                <label>Total Calibrations:</label>
+                <span>{{ selectedTechnician.totalCalibrations }}</span>
+              </div>
+              <div class="detail-item">
+                <label>This Month:</label>
+                <span>{{ selectedTechnician.monthlyCalibrations }}</span>
+              </div>
+              <div class="detail-item">
+                <label>Average Rating:</label>
+                <span>{{ selectedTechnician.averageRating }}/5.0</span>
+              </div>
+              <div class="detail-item">
+                <label>Accuracy Rate:</label>
+                <span>{{ selectedTechnician.accuracyRate }}%</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="certifications-section">
+            <h4>Certifications & Qualifications</h4>
+            <div class="certifications-grid">
+              <mat-card *ngFor="let cert of selectedTechnician.detailedCertifications" class="cert-card">
+                <mat-card-header>
+                  <mat-card-title>{{ cert.name }}</mat-card-title>
+                  <mat-card-subtitle>{{ cert.issuingBody }}</mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                  <div class="cert-details">
+                    <div class="cert-item">
+                      <label>Issue Date:</label>
+                      <span>{{ cert.issueDate | date:'mediumDate' }}</span>
+                    </div>
+                    <div class="cert-item">
+                      <label>Expiry Date:</label>
+                      <span [class.expired]="cert.expiryDate < today">{{ cert.expiryDate | date:'mediumDate' }}</span>
+                    </div>
+                    <div class="cert-item">
+                      <label>Status:</label>
+                      <mat-chip [color]="getCertificationStatusColor(cert)">{{ getCertificationStatus(cert) }}</mat-chip>
+                    </div>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+          </div>
+        </div>
+      </mat-expansion-panel>
+    </mat-card-content>
+  </mat-card>
+</div>

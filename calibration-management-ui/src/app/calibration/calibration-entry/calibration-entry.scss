@@ -1,0 +1,98 @@
+.calibration-entry-container {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.entry-card {
+  width: 100%;
+}
+
+.cal-type-badge {
+  background-color: #1976d2;
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  margin-left: 16px;
+}
+
+.form-section {
+  margin-bottom: 32px;
+  border-bottom: 1px solid #e0e0e0;
+  padding-bottom: 24px;
+}
+
+.form-section:last-child {
+  border-bottom: none;
+  margin-bottom: 0;
+}
+
+.form-section h3 {
+  margin: 0 0 16px 0;
+  color: #1976d2;
+  font-weight: 500;
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.measurement-points {
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+  padding: 16px;
+  background-color: #fafafa;
+}
+
+.measurement-point {
+  background-color: white;
+  border-radius: 4px;
+  padding: 16px;
+  margin-bottom: 16px;
+  border: 1px solid #e0e0e0;
+}
+
+.measurement-point h4 {
+  margin: 0 0 16px 0;
+  color: #666;
+  font-weight: 500;
+}
+
+mat-card-actions {
+  padding: 16px 24px;
+}
+
+mat-card-actions button {
+  margin-left: 8px;
+}
+
+mat-card-actions button mat-icon {
+  margin-right: 8px;
+}
+
+@media (max-width: 768px) {
+  .calibration-entry-container {
+    padding: 16px;
+  }
+  
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+  
+  mat-card-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  mat-card-actions button {
+    margin: 4px 0;
+  }
+}
