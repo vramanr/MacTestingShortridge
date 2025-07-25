@@ -74,7 +74,7 @@
           "builder": "@angular/build:dev-server",
           "options": {
             "host": "0.0.0.0",
-            "allowedHosts": ["vfp-modernization-app-tunnel-47wi1jcl.devinapps.com", "all"]
+            "allowedHosts": ["vfp-modernization-app-tunnel-47wi1jcl.devinapps.com", "vfp-modernization-app-tunnel-xw83bkq9.devinapps.com", "all"]
           },
           "configurations": {
             "production": {
