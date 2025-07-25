@@ -1,0 +1,148 @@
+<div class="standards-report-container">
+  <mat-card class="report-card">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>inventory</mat-icon>
+        Calibration Standards Report
+      </mat-card-title>
+      <mat-card-subtitle>
+        Generate and view calibration standards documentation
+      </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <!-- Generate Button -->
+      <div class="generate-section" *ngIf="!previewMode">
+        <div class="generate-actions">
+          <button mat-raised-button color="primary" (click)="generateReport()" [disabled]="isGenerating">
+            <mat-icon>assessment</mat-icon>
+            {{ isGenerating ? 'Loading...' : 'Generate Standards Report' }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Report Preview -->
+      <div class="report-preview" *ngIf="previewMode && standardsData.length > 0">
+        <div class="preview-actions">
+          <button mat-raised-button color="primary" (click)="downloadPdf()" [disabled]="isGenerating">
+            <mat-icon>download</mat-icon>
+            Download PDF
+          </button>
+          <button mat-raised-button color="accent" (click)="printReport()">
+            <mat-icon>print</mat-icon>
+            Print
+          </button>
+          <button mat-stroked-button (click)="resetReport()">
+            <mat-icon>refresh</mat-icon>
+            New Report
+          </button>
+        </div>
+
+        <!-- Report Content -->
+        <div class="report-content" id="standards-report-content">
+          <!-- Header -->
+          <div class="report-header">
+            <div class="company-logo">
+              <h1>Shortridge Instruments, Inc.</h1>
+            </div>
+            <div class="report-title">
+              <h2>Calibration Standards Table - Part One</h2>
+            </div>
+            <div class="report-date">
+              <p>Generated: {{ currentDate }}</p>
+              <p>Page 1</p>
+            </div>
+          </div>
+
+          <!-- Standards Table -->
+          <div class="standards-table-container">
+            <table class="standards-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Sensor</th>
+                  <th>Model</th>
+                  <th>Serial#</th>
+                  <th>Cal Date</th>
+                  <th>Cal Due Date</th>
+                  <th>Range</th>
+                  <th>Accuracy</th>
+                  <th>Uncertainty</th>
+                  <th>Mfg By</th>
+                  <th>Cal By</th>
+                  <th>Cal Interval</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let standard of standardsData">
+                  <td>{{ standard.name }}</td>
+                  <td>{{ standard.sensor }}</td>
+                  <td>{{ standard.model }}</td>
+                  <td>{{ standard.serialNumber }}</td>
+                  <td>{{ standard.calibrationDate }}</td>
+                  <td>{{ standard.dueDate }}</td>
+                  <td>{{ standard.range }}</td>
+                  <td>{{ standard.accuracy }}</td>
+                  <td>{{ standard.uncertainty }}</td>
+                  <td>{{ standard.manufacturer }}</td>
+                  <td>{{ standard.calibratedBy }}</td>
+                  <td>{{ standard.calibrationInterval }} months</td>
+                  <td>
+                    <span class="status-badge" [class]="getStatusClass(standard.dueDate)">
+                      {{ getStatusText(standard.dueDate) }}
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Summary Section -->
+          <div class="report-summary">
+            <div class="summary-stats">
+              <div class="stat-item">
+                <span class="stat-label">Total Standards:</span>
+                <span class="stat-value">{{ standardsData.length }}</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">Due Soon (&le;30 days):</span>
+                <span class="stat-value stat-warning">
+                  {{ getDueSoonCount() }}
+                </span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-label">Overdue:</span>
+                <span class="stat-value stat-error">
+                  {{ getOverdueCount() }}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Footer -->
+          <div class="report-footer">
+            <p>This report contains all calibration standards currently in the system.</p>
+            <p>Standards marked as "DUE SOON" or "OVERDUE" require immediate attention.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Loading Indicator -->
+      <div class="loading-section" *ngIf="isGenerating">
+        <mat-spinner diameter="50"></mat-spinner>
+        <p>Processing standards report...</p>
+      </div>
+
+      <!-- No Data Message -->
+      <div class="no-data-section" *ngIf="previewMode && standardsData.length === 0">
+        <mat-icon>info</mat-icon>
+        <p>No calibration standards found in the system.</p>
+        <button mat-stroked-button (click)="resetReport()">
+          <mat-icon>refresh</mat-icon>
+          Try Again
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

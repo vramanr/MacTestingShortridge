@@ -1,0 +1,174 @@
+<div class="cover-sheet-container">
+  <mat-card class="cover-sheet-card">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>article</mat-icon>
+        Cover Sheet Generator
+      </mat-card-title>
+      <mat-card-subtitle>
+        Generate cover sheets for calibration reports
+      </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <!-- Input Form -->
+      <div class="input-section" *ngIf="!previewMode">
+        <form [formGroup]="coverSheetForm" (ngSubmit)="generateCoverSheet()">
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Calibration Number</mat-label>
+              <input matInput formControlName="calNo" placeholder="Enter calibration number">
+              <mat-error *ngIf="coverSheetForm.get('calNo')?.hasError('required')">
+                Calibration number is required
+              </mat-error>
+              <mat-error *ngIf="coverSheetForm.get('calNo')?.hasError('pattern')">
+                Please enter a valid number
+              </mat-error>
+            </mat-form-field>
+          </div>
+          
+          <div class="form-actions">
+            <button mat-raised-button color="primary" type="submit" [disabled]="isGenerating || coverSheetForm.invalid">
+              <mat-icon>search</mat-icon>
+              {{ isGenerating ? 'Loading...' : 'Generate Cover Sheet' }}
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Cover Sheet Preview -->
+      <div class="cover-sheet-preview" *ngIf="previewMode && coverSheetData">
+        <div class="preview-actions">
+          <button mat-raised-button color="primary" (click)="downloadPdf()" [disabled]="isGenerating">
+            <mat-icon>download</mat-icon>
+            Download PDF
+          </button>
+          <button mat-raised-button color="accent" (click)="printCoverSheet()">
+            <mat-icon>print</mat-icon>
+            Print
+          </button>
+          <button mat-stroked-button (click)="resetForm()">
+            <mat-icon>refresh</mat-icon>
+            New Cover Sheet
+          </button>
+        </div>
+
+        <!-- Cover Sheet Content -->
+        <div class="cover-sheet-content" id="cover-sheet-content">
+          <!-- Header -->
+          <div class="cover-header">
+            <div class="company-logo">
+              <h1>Shortridge Instruments, Inc.</h1>
+              <p class="company-address">7855 E. Redfield Road, Suite 110<br>Scottsdale, Arizona 85260</p>
+              <p class="company-contact">Phone: (480) 991-7475 • Fax: (480) 991-6433</p>
+            </div>
+          </div>
+
+          <!-- Report Title -->
+          <div class="report-title-section">
+            <h2>{{ coverSheetData.reportTitle }}</h2>
+            <div class="title-underline"></div>
+          </div>
+
+          <!-- Customer Information -->
+          <div class="customer-section">
+            <div class="customer-info">
+              <h3>Customer Information</h3>
+              <div class="info-grid">
+                <div class="info-item">
+                  <span class="label">Company:</span>
+                  <span class="value">{{ coverSheetData.companyName }}</span>
+                </div>
+                <div class="info-item">
+                  <span class="label">Location:</span>
+                  <span class="value">{{ coverSheetData.city }}, {{ coverSheetData.state }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Instrument Information -->
+          <div class="instrument-section">
+            <div class="instrument-info">
+              <h3>Instrument Information</h3>
+              <div class="info-grid">
+                <div class="info-item">
+                  <span class="label">Model Number:</span>
+                  <span class="value">{{ coverSheetData.modelNumber }}</span>
+                </div>
+                <div class="info-item">
+                  <span class="label">Serial Number:</span>
+                  <span class="value">{{ coverSheetData.serialNumber }}</span>
+                </div>
+                <div class="info-item">
+                  <span class="label">Calibration Date:</span>
+                  <span class="value">{{ coverSheetData.calibrationDate }}</span>
+                </div>
+                <div class="info-item">
+                  <span class="label">Calibration Number:</span>
+                  <span class="value">{{ coverSheetData.calNo }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Report Contents -->
+          <div class="contents-section">
+            <h3>Report Contents</h3>
+            <div class="contents-list">
+              <div class="content-item">
+                <mat-icon>check_circle</mat-icon>
+                <span>Certificate of Calibration</span>
+              </div>
+              <div class="content-item">
+                <mat-icon>check_circle</mat-icon>
+                <span>Calibration Data and Readings</span>
+              </div>
+              <div class="content-item">
+                <mat-icon>check_circle</mat-icon>
+                <span>Standards Documentation</span>
+              </div>
+              <div class="content-item">
+                <mat-icon>check_circle</mat-icon>
+                <span>Traceability Information</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Certification Statement -->
+          <div class="certification-section">
+            <div class="certification-box">
+              <h4>Certification Statement</h4>
+              <p>
+                This calibration was performed in accordance with documented procedures using 
+                standards traceable to the National Institute of Standards and Technology (NIST) 
+                or other recognized national standards laboratories.
+              </p>
+              <p>
+                The uncertainty of measurement has been evaluated in accordance with the 
+                requirements of ISO/IEC 17025 and is included in the calibration certificate.
+              </p>
+            </div>
+          </div>
+
+          <!-- Footer -->
+          <div class="cover-footer">
+            <div class="footer-info">
+              <p><strong>Report Generated:</strong> {{ currentDate }}</p>
+              <p><strong>Valid Until:</strong> Next scheduled calibration</p>
+            </div>
+            <div class="footer-logo">
+              <p>ISO/IEC 17025 Accredited Laboratory</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Loading Indicator -->
+      <div class="loading-section" *ngIf="isGenerating">
+        <mat-spinner diameter="50"></mat-spinner>
+        <p>Processing cover sheet...</p>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

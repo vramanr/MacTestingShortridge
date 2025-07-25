@@ -1,0 +1,57 @@
+<div class="calibration-type-container">
+  <mat-card class="selection-card">
+    <mat-card-header>
+      <mat-card-title>Select Calibration Type</mat-card-title>
+      <mat-card-subtitle>Choose the type of calibration for entry without an order number</mat-card-subtitle>
+    </mat-card-header>
+    
+    <mat-card-content>
+      <form [formGroup]="calibrationTypeForm" (ngSubmit)="onSubmit()">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Calibration Type</mat-label>
+          <mat-select formControlName="calType" required>
+            <mat-option value="ADM">ADM - Atmospheric Data Measurement</mat-option>
+            <mat-option value="HDM">HDM - Humidity Data Measurement</mat-option>
+            <mat-option value="MultiTemp">MultiTemp - Multi-Temperature Calibration</mat-option>
+            <mat-option value="FH">FH - Fixed Humidity</mat-option>
+            <mat-option value="Pressure">Pressure - Pressure Gauge Calibration</mat-option>
+            <mat-option value="Temperature">Temperature - Temperature Probe Calibration</mat-option>
+            <mat-option value="Flow">Flow - Flow Meter Calibration</mat-option>
+            <mat-option value="Electrical">Electrical - Electrical Instrument Calibration</mat-option>
+          </mat-select>
+          <mat-error *ngIf="calibrationTypeForm.get('calType')?.hasError('required')">
+            Please select a calibration type
+          </mat-error>
+        </mat-form-field>
+
+        <div class="description-section" *ngIf="selectedTypeDescription">
+          <mat-card class="description-card">
+            <mat-card-content>
+              <h3>{{ selectedTypeDescription.title }}</h3>
+              <p>{{ selectedTypeDescription.description }}</p>
+              <div class="features">
+                <h4>Key Features:</h4>
+                <ul>
+                  <li *ngFor="let feature of selectedTypeDescription.features">{{ feature }}</li>
+                </ul>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        </div>
+      </form>
+    </mat-card-content>
+
+    <mat-card-actions align="end">
+      <button mat-button type="button" (click)="onCancel()">
+        <mat-icon>close</mat-icon>
+        Cancel
+      </button>
+      <button mat-raised-button color="primary" 
+              [disabled]="!calibrationTypeForm.valid"
+              (click)="onSubmit()">
+        <mat-icon>arrow_forward</mat-icon>
+        Continue
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</div>

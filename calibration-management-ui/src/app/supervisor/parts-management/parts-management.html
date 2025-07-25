@@ -1,0 +1,412 @@
+<div class="parts-management-container">
+  <mat-card class="management-card">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>inventory</mat-icon>
+        Parts Management
+      </mat-card-title>
+      <mat-card-subtitle>
+        Manage part lists, sizes, and box configurations for calibration services
+      </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <mat-tab-group [(selectedIndex)]="selectedTabIndex">
+        <!-- Part List Tab -->
+        <mat-tab label="Part List">
+          <div class="tab-content">
+            <div class="parts-section">
+              <div class="section-header">
+                <h3>Part Inventory Management</h3>
+                <p>Manage calibration parts, standards, and accessories inventory</p>
+              </div>
+              
+              <div class="add-form">
+                <mat-card class="form-card">
+                  <mat-card-header>
+                    <mat-card-title>Add New Part</mat-card-title>
+                  </mat-card-header>
+                  <mat-card-content>
+                    <form [formGroup]="partForm" (ngSubmit)="addPart()">
+                      <div class="form-row">
+                        <mat-form-field appearance="outline">
+                          <mat-label>Part Number</mat-label>
+                          <input matInput formControlName="partNumber" placeholder="CAL-STD-001">
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                          <mat-label>Description</mat-label>
+                          <input matInput formControlName="description" placeholder="Part description">
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                          <mat-label>Category</mat-label>
+                          <mat-select formControlName="category">
+                            <mat-option value="Calibration Standards">Calibration Standards</mat-option>
+                            <mat-option value="Accessories">Accessories</mat-option>
+                            <mat-option value="Documentation">Documentation</mat-option>
+                            <mat-option value="Tools">Tools</mat-option>
+                            <mat-option value="Consumables">Consumables</mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                      </div>
+                      <div class="form-row">
+                        <mat-form-field appearance="outline">
+                          <mat-label>Manufacturer</mat-label>
+                          <input matInput formControlName="manufacturer" placeholder="Manufacturer name">
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                          <mat-label>Model</mat-label>
+                          <input matInput formControlName="model" placeholder="Model number">
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                          <mat-label>Specifications</mat-label>
+                          <input matInput formControlName="specifications" placeholder="Technical specifications">
+                        </mat-form-field>
+                      </div>
+                      <div class="form-row">
+                        <mat-form-field appearance="outline">
+                          <mat-label>Unit Price</mat-label>
+                          <input matInput type="number" formControlName="unitPrice" placeholder="0.00">
+                          <span matPrefix>$</span>
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                          <mat-label>Stock Quantity</mat-label>
+                          <input matInput type="number" formControlName="stockQuantity" placeholder="0">
+                        </mat-form-field>
+                        <div class="checkbox-field">
+                          <mat-checkbox formControlName="isActive">Active</mat-checkbox>
+                        </div>
+                      </div>
+                      <div class="form-actions">
+                        <button mat-raised-button color="primary" type="submit" [disabled]="partForm.invalid">
+                          <mat-icon>add</mat-icon>
+                          Add Part
+                        </button>
+                      </div>
+                    </form>
+                  </mat-card-content>
+                </mat-card>
+              </div>
+
+              <div class="table-container">
+                <table mat-table [dataSource]="partItems" class="data-table">
+                  <ng-container matColumnDef="partNumber">
+                    <th mat-header-cell *matHeaderCellDef>Part Number</th>
+                    <td mat-cell *matCellDef="let part">
+                      <strong>{{ part.partNumber }}</strong>
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="description">
+                    <th mat-header-cell *matHeaderCellDef>Description</th>
+                    <td mat-cell *matCellDef="let part">{{ part.description }}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="category">
+                    <th mat-header-cell *matHeaderCellDef>Category</th>
+                    <td mat-cell *matCellDef="let part">{{ part.category }}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="manufacturer">
+                    <th mat-header-cell *matHeaderCellDef>Manufacturer</th>
+                    <td mat-cell *matCellDef="let part">{{ part.manufacturer || '-' }}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="unitPrice">
+                    <th mat-header-cell *matHeaderCellDef>Unit Price</th>
+                    <td mat-cell *matCellDef="let part">{{ formatCurrency(part.unitPrice || 0) }}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="stockQuantity">
+                    <th mat-header-cell *matHeaderCellDef>Stock</th>
+                    <td mat-cell *matCellDef="let part">{{ part.stockQuantity || 0 }}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="isActive">
+                    <th mat-header-cell *matHeaderCellDef>Status</th>
+                    <td mat-cell *matCellDef="let part">
+                      <span class="status-badge" [class]="part.isActive ? 'status-active' : 'status-inactive'">
+                        {{ part.isActive ? 'Active' : 'Inactive' }}
+                      </span>
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef>Actions</th>
+                    <td mat-cell *matCellDef="let part">
+                      <button mat-icon-button (click)="editPart(part)" matTooltip="Edit Part">
+                        <mat-icon>edit</mat-icon>
+                      </button>
+                      <button mat-icon-button (click)="togglePartStatus(part)" 
+                              [matTooltip]="part.isActive ? 'Deactivate' : 'Activate'">
+                        <mat-icon>{{ part.isActive ? 'toggle_on' : 'toggle_off' }}</mat-icon>
+                      </button>
+                      <button mat-icon-button (click)="deletePart(part)" matTooltip="Delete Part" color="warn">
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    </td>
+                  </ng-container>
+
+                  <tr mat-header-row *matHeaderRowDef="partColumns"></tr>
+                  <tr mat-row *matRowDef="let row; columns: partColumns;"></tr>
+                </table>
+              </div>
+            </div>
+          </div>
+        </mat-tab>
+
+        <!-- Part Size Tab -->
+        <mat-tab label="Part Size">
+          <div class="tab-content">
+            <div class="parts-section">
+              <div class="section-header">
+                <h3>Part Size Configuration</h3>
+                <p>Define standard part sizes and dimensions for calibration instruments</p>
+              </div>
+              
+              <div class="add-form">
+                <mat-card class="form-card">
+                  <mat-card-header>
+                    <mat-card-title>Add New Part Size</mat-card-title>
+                  </mat-card-header>
+                  <mat-card-content>
+                    <form [formGroup]="sizeForm" (ngSubmit)="addSize()">
+                      <div class="form-row">
+                        <mat-form-field appearance="outline">
+                          <mat-label>Size Code</mat-label>
+                          <input matInput formControlName="sizeCode" placeholder="SM">
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                          <mat-label>Description</mat-label>
+                          <input matInput formControlName="description" placeholder="Size description">
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                          <mat-label>Dimensions</mat-label>
+                          <input matInput formControlName="dimensions" placeholder='6" x 4" x 2"'>
+                        </mat-form-field>
+                      </div>
+                      <div class="form-row">
+                        <mat-form-field appearance="outline">
+                          <mat-label>Weight (lbs)</mat-label>
+                          <input matInput type="number" formControlName="weight" placeholder="0.0">
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                          <mat-label>Volume (cubic inches)</mat-label>
+                          <input matInput type="number" formControlName="volume" placeholder="0.0">
+                        </mat-form-field>
+                        <div class="checkbox-field">
+                          <mat-checkbox formControlName="isStandard">Standard Size</mat-checkbox>
+                          <mat-checkbox formControlName="isActive">Active</mat-checkbox>
+                        </div>
+                      </div>
+                      <div class="form-actions">
+                        <button mat-raised-button color="primary" type="submit" [disabled]="sizeForm.invalid">
+                          <mat-icon>add</mat-icon>
+                          Add Size
+                        </button>
+                      </div>
+                    </form>
+                  </mat-card-content>
+                </mat-card>
+              </div>
+
+              <div class="table-container">
+                <table mat-table [dataSource]="partSizes" class="data-table">
+                  <ng-container matColumnDef="sizeCode">
+                    <th mat-header-cell *matHeaderCellDef>Size Code</th>
+                    <td mat-cell *matCellDef="let size">
+                      <strong>{{ size.sizeCode }}</strong>
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="description">
+                    <th mat-header-cell *matHeaderCellDef>Description</th>
+                    <td mat-cell *matCellDef="let size">{{ size.description }}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="dimensions">
+                    <th mat-header-cell *matHeaderCellDef>Dimensions</th>
+                    <td mat-cell *matCellDef="let size">{{ size.dimensions }}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="weight">
+                    <th mat-header-cell *matHeaderCellDef>Weight (lbs)</th>
+                    <td mat-cell *matCellDef="let size">{{ size.weight || '-' }}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="isStandard">
+                    <th mat-header-cell *matHeaderCellDef>Type</th>
+                    <td mat-cell *matCellDef="let size">
+                      <span class="type-badge" [class]="size.isStandard ? 'type-standard' : 'type-custom'">
+                        {{ size.isStandard ? 'Standard' : 'Custom' }}
+                      </span>
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="isActive">
+                    <th mat-header-cell *matHeaderCellDef>Status</th>
+                    <td mat-cell *matCellDef="let size">
+                      <span class="status-badge" [class]="size.isActive ? 'status-active' : 'status-inactive'">
+                        {{ size.isActive ? 'Active' : 'Inactive' }}
+                      </span>
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef>Actions</th>
+                    <td mat-cell *matCellDef="let size">
+                      <button mat-icon-button (click)="editSize(size)" matTooltip="Edit Size">
+                        <mat-icon>edit</mat-icon>
+                      </button>
+                      <button mat-icon-button (click)="toggleSizeStatus(size)" 
+                              [matTooltip]="size.isActive ? 'Deactivate' : 'Activate'">
+                        <mat-icon>{{ size.isActive ? 'toggle_on' : 'toggle_off' }}</mat-icon>
+                      </button>
+                      <button mat-icon-button (click)="deleteSize(size)" matTooltip="Delete Size" color="warn">
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    </td>
+                  </ng-container>
+
+                  <tr mat-header-row *matHeaderRowDef="sizeColumns"></tr>
+                  <tr mat-row *matRowDef="let row; columns: sizeColumns;"></tr>
+                </table>
+              </div>
+            </div>
+          </div>
+        </mat-tab>
+
+        <!-- Box Size Tab -->
+        <mat-tab label="Box Size">
+          <div class="tab-content">
+            <div class="parts-section">
+              <div class="section-header">
+                <h3>Shipping Box Configuration</h3>
+                <p>Manage shipping box sizes and specifications for instrument packaging</p>
+              </div>
+              
+              <div class="add-form">
+                <mat-card class="form-card">
+                  <mat-card-header>
+                    <mat-card-title>Add New Box Size</mat-card-title>
+                  </mat-card-header>
+                  <mat-card-content>
+                    <form [formGroup]="boxForm" (ngSubmit)="addBox()">
+                      <div class="form-row">
+                        <mat-form-field appearance="outline">
+                          <mat-label>Box Code</mat-label>
+                          <input matInput formControlName="boxCode" placeholder="BOX-SM">
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                          <mat-label>Description</mat-label>
+                          <input matInput formControlName="description" placeholder="Box description">
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                          <mat-label>Material</mat-label>
+                          <mat-select formControlName="material">
+                            <mat-option value="Corrugated Cardboard">Corrugated Cardboard</mat-option>
+                            <mat-option value="Double Wall Cardboard">Double Wall Cardboard</mat-option>
+                            <mat-option value="Plywood">Plywood</mat-option>
+                            <mat-option value="Plastic">Plastic</mat-option>
+                            <mat-option value="Metal">Metal</mat-option>
+                          </mat-select>
+                        </mat-form-field>
+                      </div>
+                      <div class="form-row">
+                        <mat-form-field appearance="outline">
+                          <mat-label>Length (inches)</mat-label>
+                          <input matInput type="number" formControlName="length" placeholder="0">
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                          <mat-label>Width (inches)</mat-label>
+                          <input matInput type="number" formControlName="width" placeholder="0">
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                          <mat-label>Height (inches)</mat-label>
+                          <input matInput type="number" formControlName="height" placeholder="0">
+                        </mat-form-field>
+                      </div>
+                      <div class="form-row">
+                        <mat-form-field appearance="outline">
+                          <mat-label>Max Weight (lbs)</mat-label>
+                          <input matInput type="number" formControlName="maxWeight" placeholder="0">
+                        </mat-form-field>
+                        <div class="checkbox-field">
+                          <mat-checkbox formControlName="isActive">Active</mat-checkbox>
+                        </div>
+                      </div>
+                      <div class="form-actions">
+                        <button mat-raised-button color="primary" type="submit" [disabled]="boxForm.invalid">
+                          <mat-icon>add</mat-icon>
+                          Add Box
+                        </button>
+                      </div>
+                    </form>
+                  </mat-card-content>
+                </mat-card>
+              </div>
+
+              <div class="table-container">
+                <table mat-table [dataSource]="boxSizes" class="data-table">
+                  <ng-container matColumnDef="boxCode">
+                    <th mat-header-cell *matHeaderCellDef>Box Code</th>
+                    <td mat-cell *matCellDef="let box">
+                      <strong>{{ box.boxCode }}</strong>
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="description">
+                    <th mat-header-cell *matHeaderCellDef>Description</th>
+                    <td mat-cell *matCellDef="let box">{{ box.description }}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="dimensions">
+                    <th mat-header-cell *matHeaderCellDef>Dimensions</th>
+                    <td mat-cell *matCellDef="let box">{{ getBoxDimensions(box) }}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="maxWeight">
+                    <th mat-header-cell *matHeaderCellDef>Max Weight (lbs)</th>
+                    <td mat-cell *matCellDef="let box">{{ box.maxWeight }}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="material">
+                    <th mat-header-cell *matHeaderCellDef>Material</th>
+                    <td mat-cell *matCellDef="let box">{{ box.material }}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="isActive">
+                    <th mat-header-cell *matHeaderCellDef>Status</th>
+                    <td mat-cell *matCellDef="let box">
+                      <span class="status-badge" [class]="box.isActive ? 'status-active' : 'status-inactive'">
+                        {{ box.isActive ? 'Active' : 'Inactive' }}
+                      </span>
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef>Actions</th>
+                    <td mat-cell *matCellDef="let box">
+                      <button mat-icon-button (click)="editBox(box)" matTooltip="Edit Box">
+                        <mat-icon>edit</mat-icon>
+                      </button>
+                      <button mat-icon-button (click)="toggleBoxStatus(box)" 
+                              [matTooltip]="box.isActive ? 'Deactivate' : 'Activate'">
+                        <mat-icon>{{ box.isActive ? 'toggle_on' : 'toggle_off' }}</mat-icon>
+                      </button>
+                      <button mat-icon-button (click)="deleteBox(box)" matTooltip="Delete Box" color="warn">
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    </td>
+                  </ng-container>
+
+                  <tr mat-header-row *matHeaderRowDef="boxColumns"></tr>
+                  <tr mat-row *matRowDef="let row; columns: boxColumns;"></tr>
+                </table>
+              </div>
+            </div>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+    </mat-card-content>
+  </mat-card>
+</div>

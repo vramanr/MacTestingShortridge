@@ -1,0 +1,17 @@
+/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.Infrastructure/bin/Debug/net8.0/CalibrationManagement.Infrastructure.deps.json
+/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.Infrastructure/bin/Debug/net8.0/CalibrationManagement.Infrastructure.runtimeconfig.json
+/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.Infrastructure/bin/Debug/net8.0/CalibrationManagement.Infrastructure.dll
+/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.Infrastructure/bin/Debug/net8.0/CalibrationManagement.Infrastructure.pdb
+/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.Infrastructure/bin/Debug/net8.0/CalibrationManagement.Core.dll
+/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.Infrastructure/bin/Debug/net8.0/CalibrationManagement.Core.pdb
+/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.Infrastructure/obj/Debug/net8.0/CalibrationManagement.Infrastructure.csproj.AssemblyReference.cache
+/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.Infrastructure/obj/Debug/net8.0/CalibrationManagement.Infrastructure.GeneratedMSBuildEditorConfig.editorconfig
+/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.Infrastructure/obj/Debug/net8.0/CalibrationManagement.Infrastructure.AssemblyInfoInputs.cache
+/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.Infrastructure/obj/Debug/net8.0/CalibrationManagement.Infrastructure.AssemblyInfo.cs
+/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.Infrastructure/obj/Debug/net8.0/CalibrationManagement.Infrastructure.csproj.CoreCompileInputs.cache
+/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.Infrastructure/obj/Debug/net8.0/Calibrat.C9105DEA.Up2Date
+/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.Infrastructure/obj/Debug/net8.0/CalibrationManagement.Infrastructure.dll
+/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.Infrastructure/obj/Debug/net8.0/refint/CalibrationManagement.Infrastructure.dll
+/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.Infrastructure/obj/Debug/net8.0/CalibrationManagement.Infrastructure.pdb
+/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.Infrastructure/obj/Debug/net8.0/CalibrationManagement.Infrastructure.genruntimeconfig.cache
+/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.Infrastructure/obj/Debug/net8.0/ref/CalibrationManagement.Infrastructure.dll

@@ -1,0 +1,108 @@
+.dashboard-container {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.dashboard-header {
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.dashboard-header h1 {
+  margin: 0 0 8px 0;
+  font-size: 2.5rem;
+  font-weight: 300;
+}
+
+.dashboard-header p {
+  margin: 0;
+  color: rgba(0, 0, 0, 0.6);
+  font-size: 1.1rem;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.stat-card {
+  text-align: center;
+}
+
+.stat-card mat-card-header {
+  justify-content: center;
+  padding-bottom: 16px;
+}
+
+.stat-card mat-icon[mat-card-avatar] {
+  font-size: 40px;
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+}
+
+.stat-number {
+  font-size: 3rem;
+  font-weight: 300;
+  color: #1976d2;
+  margin-bottom: 8px;
+}
+
+.stat-label {
+  color: rgba(0, 0, 0, 0.6);
+  font-size: 0.9rem;
+}
+
+.action-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+}
+
+.quick-actions h2,
+.recent-activity h2 {
+  margin: 0 0 24px 0;
+  font-size: 1.5rem;
+  font-weight: 400;
+}
+
+.action-buttons {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.action-buttons button {
+  height: 60px;
+  font-size: 1rem;
+}
+
+.action-buttons mat-icon {
+  margin-right: 8px;
+}
+
+.recent-activity mat-list {
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+@media (max-width: 768px) {
+  .dashboard-container {
+    padding: 16px;
+  }
+  
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .action-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .action-buttons {
+    grid-template-columns: 1fr;
+  }
+}

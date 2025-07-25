@@ -1,0 +1,180 @@
+<div class="company-management-container">
+  <mat-card class="management-card">
+    <mat-card-header>
+      <mat-card-title>Company Management</mat-card-title>
+      <mat-card-subtitle>Manage companies, contacts, and model numbers</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <mat-tab-group>
+        <!-- Companies Tab -->
+        <mat-tab label="Companies">
+          <div class="tab-content">
+            <div class="actions-bar">
+              <button mat-raised-button color="primary" (click)="addCompany()">
+                <mat-icon>add</mat-icon>
+                Add Company
+              </button>
+              <mat-form-field appearance="outline" class="search-field">
+                <mat-label>Search Companies</mat-label>
+                <input matInput [(ngModel)]="companySearchTerm" (ngModelChange)="filterCompanies()">
+                <mat-icon matSuffix>search</mat-icon>
+              </mat-form-field>
+            </div>
+
+            <div class="companies-table">
+              <mat-table [dataSource]="filteredCompanies" class="data-table">
+                <ng-container matColumnDef="coId">
+                  <mat-header-cell *matHeaderCellDef>Company ID</mat-header-cell>
+                  <mat-cell *matCellDef="let company">{{ company.coId }}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="coName">
+                  <mat-header-cell *matHeaderCellDef>Company Name</mat-header-cell>
+                  <mat-cell *matCellDef="let company">{{ company.coName }}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="address">
+                  <mat-header-cell *matHeaderCellDef>Address</mat-header-cell>
+                  <mat-cell *matCellDef="let company">{{ company.address1 }}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="city">
+                  <mat-header-cell *matHeaderCellDef>City</mat-header-cell>
+                  <mat-cell *matCellDef="let company">{{ company.city }}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="phone">
+                  <mat-header-cell *matHeaderCellDef>Phone</mat-header-cell>
+                  <mat-cell *matCellDef="let company">{{ company.phone }}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="actions">
+                  <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+                  <mat-cell *matCellDef="let company">
+                    <button mat-icon-button color="primary" (click)="editCompany(company)" matTooltip="Edit Company">
+                      <mat-icon>edit</mat-icon>
+                    </button>
+                    <button mat-icon-button color="accent" (click)="viewContacts(company)" matTooltip="View Contacts">
+                      <mat-icon>contacts</mat-icon>
+                    </button>
+                    <button mat-icon-button (click)="viewModelNumbers(company)" matTooltip="View Model Numbers">
+                      <mat-icon>inventory</mat-icon>
+                    </button>
+                    <button mat-icon-button color="warn" (click)="deleteCompany(company)" matTooltip="Delete Company">
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  </mat-cell>
+                </ng-container>
+
+                <mat-header-row *matHeaderRowDef="companyColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: companyColumns;" 
+                         (click)="selectCompany(row)" 
+                         [class.selected]="selectedCompany?.coId === row.coId"></mat-row>
+              </mat-table>
+            </div>
+          </div>
+        </mat-tab>
+
+        <!-- Contacts Tab -->
+        <mat-tab label="Contacts" [disabled]="!selectedCompany">
+          <div class="tab-content" *ngIf="selectedCompany">
+            <div class="actions-bar">
+              <h3>Contacts for {{ selectedCompany.coName }}</h3>
+              <button mat-raised-button color="primary" (click)="addContact()">
+                <mat-icon>add</mat-icon>
+                Add Contact
+              </button>
+            </div>
+
+            <div class="contacts-table">
+              <mat-table [dataSource]="companyContacts" class="data-table">
+                <ng-container matColumnDef="contactName">
+                  <mat-header-cell *matHeaderCellDef>Name</mat-header-cell>
+                  <mat-cell *matCellDef="let contact">{{ contact.contactName }}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="title">
+                  <mat-header-cell *matHeaderCellDef>Title</mat-header-cell>
+                  <mat-cell *matCellDef="let contact">{{ contact.title }}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="phone">
+                  <mat-header-cell *matHeaderCellDef>Phone</mat-header-cell>
+                  <mat-cell *matCellDef="let contact">{{ contact.phone }}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="email">
+                  <mat-header-cell *matHeaderCellDef>Email</mat-header-cell>
+                  <mat-cell *matCellDef="let contact">{{ contact.email }}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="actions">
+                  <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+                  <mat-cell *matCellDef="let contact">
+                    <button mat-icon-button color="primary" (click)="editContact(contact)" matTooltip="Edit Contact">
+                      <mat-icon>edit</mat-icon>
+                    </button>
+                    <button mat-icon-button color="warn" (click)="deleteContact(contact)" matTooltip="Delete Contact">
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  </mat-cell>
+                </ng-container>
+
+                <mat-header-row *matHeaderRowDef="contactColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: contactColumns;"></mat-row>
+              </mat-table>
+            </div>
+          </div>
+        </mat-tab>
+
+        <!-- Model Numbers Tab -->
+        <mat-tab label="Model Numbers" [disabled]="!selectedCompany">
+          <div class="tab-content" *ngIf="selectedCompany">
+            <div class="actions-bar">
+              <h3>Model Numbers for {{ selectedCompany.coName }}</h3>
+              <button mat-raised-button color="primary" (click)="addModelNumber()">
+                <mat-icon>add</mat-icon>
+                Add Model Number
+              </button>
+            </div>
+
+            <div class="model-numbers-table">
+              <mat-table [dataSource]="companyModelNumbers" class="data-table">
+                <ng-container matColumnDef="modelNo">
+                  <mat-header-cell *matHeaderCellDef>Model Number</mat-header-cell>
+                  <mat-cell *matCellDef="let model">{{ model.modelNo }}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="description">
+                  <mat-header-cell *matHeaderCellDef>Description</mat-header-cell>
+                  <mat-cell *matCellDef="let model">{{ model.description }}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="calType">
+                  <mat-header-cell *matHeaderCellDef>Calibration Type</mat-header-cell>
+                  <mat-cell *matCellDef="let model">{{ model.calType }}</mat-cell>
+                </ng-container>
+
+                <ng-container matColumnDef="actions">
+                  <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+                  <mat-cell *matCellDef="let model">
+                    <button mat-icon-button color="primary" (click)="editModelNumber(model)" matTooltip="Edit Model">
+                      <mat-icon>edit</mat-icon>
+                    </button>
+                    <button mat-icon-button color="warn" (click)="deleteModelNumber(model)" matTooltip="Delete Model">
+                      <mat-icon>delete</mat-icon>
+                    </button>
+                  </mat-cell>
+                </ng-container>
+
+                <mat-header-row *matHeaderRowDef="modelColumns"></mat-header-row>
+                <mat-row *matRowDef="let row; columns: modelColumns;"></mat-row>
+              </mat-table>
+            </div>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+    </mat-card-content>
+  </mat-card>
+</div>

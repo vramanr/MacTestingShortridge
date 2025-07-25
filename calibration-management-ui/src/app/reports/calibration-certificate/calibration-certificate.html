@@ -1,0 +1,168 @@
+<div class="certificate-container">
+  <mat-card class="certificate-card">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>description</mat-icon>
+        Calibration Certificate Generator
+      </mat-card-title>
+      <mat-card-subtitle>
+        Generate and print calibration certificates
+      </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <!-- Input Form -->
+      <div class="input-section" *ngIf="!previewMode">
+        <form [formGroup]="certificateForm" (ngSubmit)="generateCertificate()">
+          <div class="form-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Calibration Number</mat-label>
+              <input matInput formControlName="calNo" placeholder="Enter calibration number">
+              <mat-error *ngIf="certificateForm.get('calNo')?.hasError('required')">
+                Calibration number is required
+              </mat-error>
+              <mat-error *ngIf="certificateForm.get('calNo')?.hasError('pattern')">
+                Please enter a valid number
+              </mat-error>
+            </mat-form-field>
+          </div>
+          
+          <div class="form-actions">
+            <button mat-raised-button color="primary" type="submit" [disabled]="isGenerating || certificateForm.invalid">
+              <mat-icon>search</mat-icon>
+              {{ isGenerating ? 'Loading...' : 'Load Certificate Data' }}
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Certificate Preview -->
+      <div class="certificate-preview" *ngIf="previewMode && certificateData">
+        <div class="preview-actions">
+          <button mat-raised-button color="primary" (click)="downloadPdf()" [disabled]="isGenerating">
+            <mat-icon>download</mat-icon>
+            Download PDF
+          </button>
+          <button mat-raised-button color="accent" (click)="printCertificate()">
+            <mat-icon>print</mat-icon>
+            Print
+          </button>
+          <button mat-stroked-button (click)="resetForm()">
+            <mat-icon>refresh</mat-icon>
+            New Certificate
+          </button>
+        </div>
+
+        <!-- Certificate Content -->
+        <div class="certificate-content" id="certificate-content">
+          <!-- Header -->
+          <div class="certificate-header">
+            <div class="company-logo">
+              <h1>Shortridge Instruments, Inc.</h1>
+            </div>
+            <div class="certificate-title">
+              <h2>{{ certificateData.reportTitle }}</h2>
+            </div>
+          </div>
+
+          <!-- Customer Information -->
+          <div class="customer-info">
+            <div class="info-section">
+              <h3>Calibration Report for</h3>
+              <div class="customer-details">
+                <p><strong>{{ certificateData.companyName }}</strong></p>
+                <p>{{ certificateData.city }}, {{ certificateData.state }}</p>
+              </div>
+            </div>
+
+            <div class="instrument-info">
+              <div class="info-row">
+                <span class="label">Model Number:</span>
+                <span class="value">{{ certificateData?.modelNumber }}</span>
+              </div>
+              <div class="info-row">
+                <span class="label">Serial Number:</span>
+                <span class="value">{{ certificateData?.serialNumber }}</span>
+              </div>
+              <div class="info-row">
+                <span class="label">Calibration Date:</span>
+                <span class="value">{{ certificateData?.calibrationDate }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Calibration Data Table -->
+          <div class="calibration-data">
+            <h3>Readings:</h3>
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Approximate Set Point</th>
+                  <th>Standard Reading</th>
+                  <th>Test Meter Reading</th>
+                  <th>Allowed Deviation</th>
+                  <th>Actual Deviation</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let dataPoint of certificateData.calibrationData">
+                  <td>{{ dataPoint.setPoint }}</td>
+                  <td>{{ dataPoint.standardReading }}</td>
+                  <td>{{ dataPoint.testReading }}</td>
+                  <td>{{ dataPoint.allowedDeviation }}</td>
+                  <td>{{ dataPoint.actualDeviation }}</td>
+                  <td>
+                    <span class="status-badge" [class]="getStatusClass(dataPoint)">
+                      {{ getPassFailStatus(dataPoint) }}
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Procedure Information -->
+          <div class="procedure-info">
+            <div class="info-row">
+              <span class="label">Procedure Used:</span>
+              <span class="value">{{ certificateData?.testType }}</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Calibrated By:</span>
+              <span class="value">{{ certificateData?.testBy }}</span>
+            </div>
+            <div class="info-row">
+              <span class="label">Date:</span>
+              <span class="value">{{ certificateData?.calibrationDate }}</span>
+            </div>
+          </div>
+
+          <!-- Signature Section -->
+          <div class="signature-section">
+            <div class="signature-line">
+              <span class="signature-label">Approved By:</span>
+              <span class="signature-blank">________________________</span>
+              <span class="signature-label">Title:</span>
+              <span class="signature-blank">__________________</span>
+              <span class="signature-label">Date:</span>
+              <span class="signature-blank">________</span>
+            </div>
+          </div>
+
+          <!-- Footer -->
+          <div class="certificate-footer">
+            <p>This certificate is valid only for the instrument identified above and only under the conditions specified.</p>
+            <p>Calibration Number: {{ certificateData?.calNo }}</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Loading Indicator -->
+      <div class="loading-section" *ngIf="isGenerating">
+        <mat-spinner diameter="50"></mat-spinner>
+        <p>Processing certificate...</p>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>

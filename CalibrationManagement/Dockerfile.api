@@ -1,0 +1,23 @@
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
+WORKDIR /app
+EXPOSE 80
+EXPOSE 443
+
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+WORKDIR /src
+COPY ["CalibrationManagement.API/CalibrationManagement.API.csproj", "CalibrationManagement.API/"]
+COPY ["CalibrationManagement.Application/CalibrationManagement.Application.csproj", "CalibrationManagement.Application/"]
+COPY ["CalibrationManagement.Core/CalibrationManagement.Core.csproj", "CalibrationManagement.Core/"]
+COPY ["CalibrationManagement.Infrastructure/CalibrationManagement.Infrastructure.csproj", "CalibrationManagement.Infrastructure/"]
+RUN dotnet restore "CalibrationManagement.API/CalibrationManagement.API.csproj"
+COPY . .
+WORKDIR "/src/CalibrationManagement.API"
+RUN dotnet build "CalibrationManagement.API.csproj" -c Release -o /app/build
+
+FROM build AS publish
+RUN dotnet publish "CalibrationManagement.API.csproj" -c Release -o /app/publish /p:UseAppHost=false
+
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+ENTRYPOINT ["dotnet", "CalibrationManagement.API.dll"]

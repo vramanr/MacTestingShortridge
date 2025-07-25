@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: calibration-postgres
+    environment:
+      POSTGRES_DB: CalibrationManagement
+      POSTGRES_USER: calibration_user
+      POSTGRES_PASSWORD: calibration_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./CalibrationManagement/database-schema.sql:/docker-entrypoint-initdb.d/01-schema.sql
+    networks:
+      - calibration-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U calibration_user -d CalibrationManagement"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  api:
+    build:
+      context: ./CalibrationManagement
+      dockerfile: Dockerfile.api
+    container_name: calibration-api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ConnectionStrings__DefaultConnection=Host=postgres;Database=CalibrationManagement;Username=calibration_user;Password=calibration_password
+      - ASPNETCORE_URLS=http://+:80
+    ports:
+      - "5000:80"
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - calibration-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  frontend:
+    build:
+      context: ./calibration-management-ui
+      dockerfile: Dockerfile
+    container_name: calibration-frontend
+    ports:
+      - "4200:80"
+    depends_on:
+      api:
+        condition: service_healthy
+    networks:
+      - calibration-network
+    environment:
+      - API_URL=http://api:80
+
+volumes:
+  postgres_data:
+
+networks:
+  calibration-network:
+    driver: bridge

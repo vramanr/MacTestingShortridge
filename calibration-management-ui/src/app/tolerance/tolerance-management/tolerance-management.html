@@ -1,0 +1,149 @@
+<div class="tolerance-management-container">
+  <mat-card class="management-card">
+    <mat-card-header>
+      <mat-card-title>Tolerance Management</mat-card-title>
+      <mat-card-subtitle>Manage calibration tolerances and specifications</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div class="actions-bar">
+        <button mat-raised-button color="primary" (click)="addTolerance()">
+          <mat-icon>add</mat-icon>
+          Add Tolerance
+        </button>
+        <div class="filter-controls">
+          <mat-form-field appearance="outline">
+            <mat-label>Filter by Type</mat-label>
+            <mat-select [(ngModel)]="selectedCalType" (ngModelChange)="filterTolerances()">
+              <mat-option value="">All Types</mat-option>
+              <mat-option value="ADM">ADM</mat-option>
+              <mat-option value="HDM">HDM</mat-option>
+              <mat-option value="MultiTemp">MultiTemp</mat-option>
+              <mat-option value="FH">FH</mat-option>
+              <mat-option value="Pressure">Pressure</mat-option>
+              <mat-option value="Temperature">Temperature</mat-option>
+              <mat-option value="Flow">Flow</mat-option>
+              <mat-option value="Electrical">Electrical</mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="outline">
+            <mat-label>Search Tolerances</mat-label>
+            <input matInput [(ngModel)]="searchTerm" (ngModelChange)="filterTolerances()">
+            <mat-icon matSuffix>search</mat-icon>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="tolerances-table">
+        <mat-table [dataSource]="filteredTolerances" class="data-table">
+          <ng-container matColumnDef="calType">
+            <mat-header-cell *matHeaderCellDef>Calibration Type</mat-header-cell>
+            <mat-cell *matCellDef="let tolerance">
+              <span class="cal-type-chip">{{ tolerance.calType }}</span>
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="parameter">
+            <mat-header-cell *matHeaderCellDef>Parameter</mat-header-cell>
+            <mat-cell *matCellDef="let tolerance">{{ tolerance.parameter }}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="rangeMin">
+            <mat-header-cell *matHeaderCellDef>Min Range</mat-header-cell>
+            <mat-cell *matCellDef="let tolerance">{{ tolerance.rangeMin }} {{ tolerance.units }}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="rangeMax">
+            <mat-header-cell *matHeaderCellDef>Max Range</mat-header-cell>
+            <mat-cell *matCellDef="let tolerance">{{ tolerance.rangeMax }} {{ tolerance.units }}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="tolerance">
+            <mat-header-cell *matHeaderCellDef>Tolerance</mat-header-cell>
+            <mat-cell *matCellDef="let tolerance">
+              ±{{ tolerance.toleranceValue }}{{ tolerance.toleranceType === 'percentage' ? '%' : ' ' + tolerance.units }}
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="uncertainty">
+            <mat-header-cell *matHeaderCellDef>Uncertainty</mat-header-cell>
+            <mat-cell *matCellDef="let tolerance">
+              {{ tolerance.uncertainty }}{{ tolerance.uncertaintyType === 'percentage' ? '%' : ' ' + tolerance.units }}
+            </mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="standard">
+            <mat-header-cell *matHeaderCellDef>Standard</mat-header-cell>
+            <mat-cell *matCellDef="let tolerance">{{ tolerance.standard }}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="actions">
+            <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+            <mat-cell *matCellDef="let tolerance">
+              <button mat-icon-button color="primary" (click)="editTolerance(tolerance)" matTooltip="Edit Tolerance">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button (click)="duplicateTolerance(tolerance)" matTooltip="Duplicate Tolerance">
+                <mat-icon>content_copy</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" (click)="deleteTolerance(tolerance)" matTooltip="Delete Tolerance">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </mat-cell>
+          </ng-container>
+
+          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+          <mat-row *matRowDef="let row; columns: displayedColumns;" 
+                   (click)="selectTolerance(row)" 
+                   [class.selected]="selectedTolerance?.toleranceId === row.toleranceId"></mat-row>
+        </mat-table>
+      </div>
+
+      <!-- Tolerance Details Panel -->
+      <mat-expansion-panel *ngIf="selectedTolerance" class="details-panel">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            Tolerance Details: {{ selectedTolerance.parameter }}
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        
+        <div class="tolerance-details">
+          <div class="detail-grid">
+            <div class="detail-item">
+              <label>Calibration Type:</label>
+              <span>{{ selectedTolerance.calType }}</span>
+            </div>
+            <div class="detail-item">
+              <label>Parameter:</label>
+              <span>{{ selectedTolerance.parameter }}</span>
+            </div>
+            <div class="detail-item">
+              <label>Range:</label>
+              <span>{{ selectedTolerance.rangeMin }} to {{ selectedTolerance.rangeMax }} {{ selectedTolerance.units }}</span>
+            </div>
+            <div class="detail-item">
+              <label>Tolerance:</label>
+              <span>±{{ selectedTolerance.toleranceValue }}{{ selectedTolerance.toleranceType === 'percentage' ? '%' : ' ' + selectedTolerance.units }}</span>
+            </div>
+            <div class="detail-item">
+              <label>Uncertainty:</label>
+              <span>{{ selectedTolerance.uncertainty }}{{ selectedTolerance.uncertaintyType === 'percentage' ? '%' : ' ' + selectedTolerance.units }}</span>
+            </div>
+            <div class="detail-item">
+              <label>Standard:</label>
+              <span>{{ selectedTolerance.standard }}</span>
+            </div>
+            <div class="detail-item">
+              <label>Description:</label>
+              <span>{{ selectedTolerance.description || 'N/A' }}</span>
+            </div>
+            <div class="detail-item">
+              <label>Last Updated:</label>
+              <span>{{ selectedTolerance.lastUpdated | date:'medium' }}</span>
+            </div>
+          </div>
+        </div>
+      </mat-expansion-panel>
+    </mat-card-content>
+  </mat-card>
+</div>

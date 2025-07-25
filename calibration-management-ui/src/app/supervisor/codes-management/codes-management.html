@@ -1,0 +1,430 @@
+<div class="codes-management-container">
+  <mat-card class="management-card">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>code</mat-icon>
+        Codes Management
+      </mat-card-title>
+      <mat-card-subtitle>
+        Manage system codes for accounts, discounts, shipping, tax, and payment terms
+      </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <mat-tab-group [(selectedIndex)]="selectedTabIndex">
+        <!-- Account Codes Tab -->
+        <mat-tab label="Account Codes">
+          <div class="tab-content">
+            <div class="codes-section">
+              <div class="section-header">
+                <h3>Account Code Management</h3>
+                <p>Manage customer account classification codes</p>
+              </div>
+              
+              <div class="add-code-form">
+                <mat-card class="form-card">
+                  <mat-card-header>
+                    <mat-card-title>Add New Account Code</mat-card-title>
+                  </mat-card-header>
+                  <mat-card-content>
+                    <form [formGroup]="codeForm" (ngSubmit)="addCode()">
+                      <div class="form-row">
+                        <mat-form-field appearance="outline">
+                          <mat-label>Code</mat-label>
+                          <input matInput formControlName="code" placeholder="ACCT001">
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                          <mat-label>Description</mat-label>
+                          <input matInput formControlName="description" placeholder="Account description">
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                          <mat-label>Value</mat-label>
+                          <input matInput formControlName="value" placeholder="Account value">
+                        </mat-form-field>
+                      </div>
+                      <div class="form-actions">
+                        <mat-checkbox formControlName="isActive">Active</mat-checkbox>
+                        <button mat-raised-button color="primary" type="submit" [disabled]="codeForm.invalid">
+                          <mat-icon>add</mat-icon>
+                          Add Code
+                        </button>
+                      </div>
+                    </form>
+                  </mat-card-content>
+                </mat-card>
+              </div>
+
+              <div class="codes-table-container">
+                <table mat-table [dataSource]="accountCodes" class="codes-table">
+                  <ng-container matColumnDef="code">
+                    <th mat-header-cell *matHeaderCellDef>Code</th>
+                    <td mat-cell *matCellDef="let code">
+                      <strong>{{ code.code }}</strong>
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="description">
+                    <th mat-header-cell *matHeaderCellDef>Description</th>
+                    <td mat-cell *matCellDef="let code">{{ code.description }}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="value">
+                    <th mat-header-cell *matHeaderCellDef>Value</th>
+                    <td mat-cell *matCellDef="let code">{{ getValueDisplay(code) }}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="isActive">
+                    <th mat-header-cell *matHeaderCellDef>Status</th>
+                    <td mat-cell *matCellDef="let code">
+                      <span class="status-badge" [class]="code.isActive ? 'status-active' : 'status-inactive'">
+                        {{ code.isActive ? 'Active' : 'Inactive' }}
+                      </span>
+                    </td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="lastModified">
+                    <th mat-header-cell *matHeaderCellDef>Last Modified</th>
+                    <td mat-cell *matCellDef="let code">{{ code.lastModified | date:'short' }}</td>
+                  </ng-container>
+
+                  <ng-container matColumnDef="actions">
+                    <th mat-header-cell *matHeaderCellDef>Actions</th>
+                    <td mat-cell *matCellDef="let code">
+                      <button mat-icon-button (click)="editCode(code)" matTooltip="Edit Code">
+                        <mat-icon>edit</mat-icon>
+                      </button>
+                      <button mat-icon-button (click)="toggleCodeStatus(code)" 
+                              [matTooltip]="code.isActive ? 'Deactivate' : 'Activate'">
+                        <mat-icon>{{ code.isActive ? 'toggle_on' : 'toggle_off' }}</mat-icon>
+                      </button>
+                      <button mat-icon-button (click)="deleteCode(code)" matTooltip="Delete Code" color="warn">
+                        <mat-icon>delete</mat-icon>
+                      </button>
+                    </td>
+                  </ng-container>
+
+                  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                </table>
+              </div>
+            </div>
+          </div>
+        </mat-tab>
+
+        <!-- Sub Account Codes Tab -->
+        <mat-tab label="Sub Account Codes">
+          <div class="tab-content">
+            <div class="codes-section">
+              <div class="section-header">
+                <h3>Sub Account Code Management</h3>
+                <p>Manage sub-account classification codes</p>
+              </div>
+              
+              <div class="add-code-form">
+                <mat-card class="form-card">
+                  <mat-card-header>
+                    <mat-card-title>Add New Sub Account Code</mat-card-title>
+                  </mat-card-header>
+                  <mat-card-content>
+                    <form [formGroup]="codeForm" (ngSubmit)="addCode()">
+                      <div class="form-row">
+                        <mat-form-field appearance="outline">
+                          <mat-label>Code</mat-label>
+                          <input matInput formControlName="code" placeholder="SUB001">
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                          <mat-label>Description</mat-label>
+                          <input matInput formControlName="description" placeholder="Sub account description">
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                          <mat-label>Value</mat-label>
+                          <input matInput formControlName="value" placeholder="Sub account value">
+                        </mat-form-field>
+                      </div>
+                      <div class="form-actions">
+                        <mat-checkbox formControlName="isActive">Active</mat-checkbox>
+                        <button mat-raised-button color="primary" type="submit" [disabled]="codeForm.invalid">
+                          <mat-icon>add</mat-icon>
+                          Add Code
+                        </button>
+                      </div>
+                    </form>
+                  </mat-card-content>
+                </mat-card>
+              </div>
+
+              <div class="codes-table-container">
+                <table mat-table [dataSource]="subAccountCodes" class="codes-table">
+                  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                </table>
+              </div>
+            </div>
+          </div>
+        </mat-tab>
+
+        <!-- Discount Codes Tab -->
+        <mat-tab label="Discount Codes">
+          <div class="tab-content">
+            <div class="codes-section">
+              <div class="section-header">
+                <h3>Discount Code Management</h3>
+                <p>Manage customer discount percentage codes</p>
+              </div>
+              
+              <div class="add-code-form">
+                <mat-card class="form-card">
+                  <mat-card-header>
+                    <mat-card-title>Add New Discount Code</mat-card-title>
+                  </mat-card-header>
+                  <mat-card-content>
+                    <form [formGroup]="codeForm" (ngSubmit)="addCode()">
+                      <div class="form-row">
+                        <mat-form-field appearance="outline">
+                          <mat-label>Code</mat-label>
+                          <input matInput formControlName="code" placeholder="DISC10">
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                          <mat-label>Description</mat-label>
+                          <input matInput formControlName="description" placeholder="Discount description">
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                          <mat-label>Percentage</mat-label>
+                          <input matInput type="number" formControlName="percentage" placeholder="10">
+                          <span matSuffix>%</span>
+                        </mat-form-field>
+                      </div>
+                      <div class="form-actions">
+                        <mat-checkbox formControlName="isActive">Active</mat-checkbox>
+                        <button mat-raised-button color="primary" type="submit" [disabled]="codeForm.invalid">
+                          <mat-icon>add</mat-icon>
+                          Add Code
+                        </button>
+                      </div>
+                    </form>
+                  </mat-card-content>
+                </mat-card>
+              </div>
+
+              <div class="codes-table-container">
+                <table mat-table [dataSource]="discountCodes" class="codes-table">
+                  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                </table>
+              </div>
+            </div>
+          </div>
+        </mat-tab>
+
+        <!-- QA Codes Tab -->
+        <mat-tab label="QA Codes">
+          <div class="tab-content">
+            <div class="codes-section">
+              <div class="section-header">
+                <h3>Quality Assurance Code Management</h3>
+                <p>Manage quality assurance and certification codes</p>
+              </div>
+              
+              <div class="add-code-form">
+                <mat-card class="form-card">
+                  <mat-card-header>
+                    <mat-card-title>Add New QA Code</mat-card-title>
+                  </mat-card-header>
+                  <mat-card-content>
+                    <form [formGroup]="codeForm" (ngSubmit)="addCode()">
+                      <div class="form-row">
+                        <mat-form-field appearance="outline">
+                          <mat-label>Code</mat-label>
+                          <input matInput formControlName="code" placeholder="QA001">
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                          <mat-label>Description</mat-label>
+                          <input matInput formControlName="description" placeholder="QA standard description">
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                          <mat-label>Value</mat-label>
+                          <input matInput formControlName="value" placeholder="QA value">
+                        </mat-form-field>
+                      </div>
+                      <div class="form-actions">
+                        <mat-checkbox formControlName="isActive">Active</mat-checkbox>
+                        <button mat-raised-button color="primary" type="submit" [disabled]="codeForm.invalid">
+                          <mat-icon>add</mat-icon>
+                          Add Code
+                        </button>
+                      </div>
+                    </form>
+                  </mat-card-content>
+                </mat-card>
+              </div>
+
+              <div class="codes-table-container">
+                <table mat-table [dataSource]="qaCodes" class="codes-table">
+                  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                </table>
+              </div>
+            </div>
+          </div>
+        </mat-tab>
+
+        <!-- Ship Via Codes Tab -->
+        <mat-tab label="Ship Via Codes">
+          <div class="tab-content">
+            <div class="codes-section">
+              <div class="section-header">
+                <h3>Shipping Method Code Management</h3>
+                <p>Manage shipping and delivery method codes</p>
+              </div>
+              
+              <div class="add-code-form">
+                <mat-card class="form-card">
+                  <mat-card-header>
+                    <mat-card-title>Add New Shipping Code</mat-card-title>
+                  </mat-card-header>
+                  <mat-card-content>
+                    <form [formGroup]="codeForm" (ngSubmit)="addCode()">
+                      <div class="form-row">
+                        <mat-form-field appearance="outline">
+                          <mat-label>Code</mat-label>
+                          <input matInput formControlName="code" placeholder="SHIP001">
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                          <mat-label>Description</mat-label>
+                          <input matInput formControlName="description" placeholder="Shipping method description">
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                          <mat-label>Value</mat-label>
+                          <input matInput formControlName="value" placeholder="Shipping value">
+                        </mat-form-field>
+                      </div>
+                      <div class="form-actions">
+                        <mat-checkbox formControlName="isActive">Active</mat-checkbox>
+                        <button mat-raised-button color="primary" type="submit" [disabled]="codeForm.invalid">
+                          <mat-icon>add</mat-icon>
+                          Add Code
+                        </button>
+                      </div>
+                    </form>
+                  </mat-card-content>
+                </mat-card>
+              </div>
+
+              <div class="codes-table-container">
+                <table mat-table [dataSource]="shippingCodes" class="codes-table">
+                  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                </table>
+              </div>
+            </div>
+          </div>
+        </mat-tab>
+
+        <!-- Tax Codes Tab -->
+        <mat-tab label="Tax Codes">
+          <div class="tab-content">
+            <div class="codes-section">
+              <div class="section-header">
+                <h3>Tax Code Management</h3>
+                <p>Manage tax calculation and exemption codes</p>
+              </div>
+              
+              <div class="add-code-form">
+                <mat-card class="form-card">
+                  <mat-card-header>
+                    <mat-card-title>Add New Tax Code</mat-card-title>
+                  </mat-card-header>
+                  <mat-card-content>
+                    <form [formGroup]="codeForm" (ngSubmit)="addCode()">
+                      <div class="form-row">
+                        <mat-form-field appearance="outline">
+                          <mat-label>Code</mat-label>
+                          <input matInput formControlName="code" placeholder="TAX001">
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                          <mat-label>Description</mat-label>
+                          <input matInput formControlName="description" placeholder="Tax description">
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                          <mat-label>Tax Percentage</mat-label>
+                          <input matInput type="number" formControlName="percentage" placeholder="8.25">
+                          <span matSuffix>%</span>
+                        </mat-form-field>
+                      </div>
+                      <div class="form-actions">
+                        <mat-checkbox formControlName="isActive">Active</mat-checkbox>
+                        <button mat-raised-button color="primary" type="submit" [disabled]="codeForm.invalid">
+                          <mat-icon>add</mat-icon>
+                          Add Code
+                        </button>
+                      </div>
+                    </form>
+                  </mat-card-content>
+                </mat-card>
+              </div>
+
+              <div class="codes-table-container">
+                <table mat-table [dataSource]="taxCodes" class="codes-table">
+                  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                </table>
+              </div>
+            </div>
+          </div>
+        </mat-tab>
+
+        <!-- Terms Codes Tab -->
+        <mat-tab label="Terms Codes">
+          <div class="tab-content">
+            <div class="codes-section">
+              <div class="section-header">
+                <h3>Payment Terms Code Management</h3>
+                <p>Manage payment terms and conditions codes</p>
+              </div>
+              
+              <div class="add-code-form">
+                <mat-card class="form-card">
+                  <mat-card-header>
+                    <mat-card-title>Add New Terms Code</mat-card-title>
+                  </mat-card-header>
+                  <mat-card-content>
+                    <form [formGroup]="codeForm" (ngSubmit)="addCode()">
+                      <div class="form-row">
+                        <mat-form-field appearance="outline">
+                          <mat-label>Code</mat-label>
+                          <input matInput formControlName="code" placeholder="NET30">
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                          <mat-label>Description</mat-label>
+                          <input matInput formControlName="description" placeholder="Payment terms description">
+                        </mat-form-field>
+                        <mat-form-field appearance="outline">
+                          <mat-label>Days</mat-label>
+                          <input matInput formControlName="value" placeholder="30">
+                        </mat-form-field>
+                      </div>
+                      <div class="form-actions">
+                        <mat-checkbox formControlName="isActive">Active</mat-checkbox>
+                        <button mat-raised-button color="primary" type="submit" [disabled]="codeForm.invalid">
+                          <mat-icon>add</mat-icon>
+                          Add Code
+                        </button>
+                      </div>
+                    </form>
+                  </mat-card-content>
+                </mat-card>
+              </div>
+
+              <div class="codes-table-container">
+                <table mat-table [dataSource]="termsCodes" class="codes-table">
+                  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+                </table>
+              </div>
+            </div>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+    </mat-card-content>
+  </mat-card>
+</div>

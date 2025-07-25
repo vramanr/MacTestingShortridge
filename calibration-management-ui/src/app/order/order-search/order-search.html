@@ -1,0 +1,284 @@
+<div class="order-search-container">
+  <mat-card class="search-card">
+    <mat-card-header>
+      <mat-card-title>Order Search & Management</mat-card-title>
+      <mat-card-subtitle>Search, view, and manage calibration orders</mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <mat-tab-group>
+        <!-- Search Tab -->
+        <mat-tab label="Search Orders">
+          <div class="tab-content">
+            <form [formGroup]="searchForm" (ngSubmit)="onSearch()">
+              <div class="search-section">
+                <h3>Search Criteria</h3>
+                <div class="form-row">
+                  <mat-form-field appearance="outline">
+                    <mat-label>Order Number</mat-label>
+                    <input matInput formControlName="orderNo" placeholder="Enter order number">
+                  </mat-form-field>
+                  <mat-form-field appearance="outline">
+                    <mat-label>Company</mat-label>
+                    <mat-select formControlName="coId">
+                      <mat-option value="">All Companies</mat-option>
+                      <mat-option *ngFor="let company of companies" [value]="company.coId">
+                        {{ company.coName }}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                  <mat-form-field appearance="outline">
+                    <mat-label>Order Status</mat-label>
+                    <mat-select formControlName="status">
+                      <mat-option value="">All Status</mat-option>
+                      <mat-option value="Open">Open</mat-option>
+                      <mat-option value="In Progress">In Progress</mat-option>
+                      <mat-option value="Complete">Complete</mat-option>
+                      <mat-option value="Shipped">Shipped</mat-option>
+                      <mat-option value="Cancelled">Cancelled</mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </div>
+                <div class="form-row">
+                  <mat-form-field appearance="outline">
+                    <mat-label>Date From</mat-label>
+                    <input matInput [matDatepicker]="fromDatePicker" formControlName="dateFrom">
+                    <mat-datepicker-toggle matSuffix [for]="fromDatePicker"></mat-datepicker-toggle>
+                    <mat-datepicker #fromDatePicker></mat-datepicker>
+                  </mat-form-field>
+                  <mat-form-field appearance="outline">
+                    <mat-label>Date To</mat-label>
+                    <input matInput [matDatepicker]="toDatePicker" formControlName="dateTo">
+                    <mat-datepicker-toggle matSuffix [for]="toDatePicker"></mat-datepicker-toggle>
+                    <mat-datepicker #toDatePicker></mat-datepicker>
+                  </mat-form-field>
+                  <div class="search-actions">
+                    <button mat-raised-button color="primary" type="submit">
+                      <mat-icon>search</mat-icon>
+                      Search
+                    </button>
+                    <button mat-button type="button" (click)="onClear()">
+                      <mat-icon>clear</mat-icon>
+                      Clear
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </form>
+
+            <!-- Search Results -->
+            <div class="results-section" *ngIf="searchResults.length > 0 || hasSearched">
+              <div class="results-header">
+                <h3>Search Results</h3>
+                <div class="results-actions">
+                  <span class="results-count">{{ searchResults.length }} order(s) found</span>
+                  <button mat-raised-button color="accent" (click)="createNewOrder()">
+                    <mat-icon>add</mat-icon>
+                    New Order
+                  </button>
+                </div>
+              </div>
+
+              <div class="results-table" *ngIf="searchResults.length > 0">
+                <mat-table [dataSource]="searchResults" class="order-table">
+                  <!-- Order Number Column -->
+                  <ng-container matColumnDef="orderNo">
+                    <mat-header-cell *matHeaderCellDef>Order No</mat-header-cell>
+                    <mat-cell *matCellDef="let order">{{ order.orderNo }}</mat-cell>
+                  </ng-container>
+
+                  <!-- Company Column -->
+                  <ng-container matColumnDef="company">
+                    <mat-header-cell *matHeaderCellDef>Company</mat-header-cell>
+                    <mat-cell *matCellDef="let order">{{ order.companyName }}</mat-cell>
+                  </ng-container>
+
+                  <!-- Order Date Column -->
+                  <ng-container matColumnDef="orderDate">
+                    <mat-header-cell *matHeaderCellDef>Order Date</mat-header-cell>
+                    <mat-cell *matCellDef="let order">{{ order.orderDate | date:'short' }}</mat-cell>
+                  </ng-container>
+
+                  <!-- Due Date Column -->
+                  <ng-container matColumnDef="dueDate">
+                    <mat-header-cell *matHeaderCellDef>Due Date</mat-header-cell>
+                    <mat-cell *matCellDef="let order">{{ order.dueDate | date:'short' }}</mat-cell>
+                  </ng-container>
+
+                  <!-- Status Column -->
+                  <ng-container matColumnDef="status">
+                    <mat-header-cell *matHeaderCellDef>Status</mat-header-cell>
+                    <mat-cell *matCellDef="let order">
+                      <mat-chip [color]="getStatusColor(order.status)">{{ order.status }}</mat-chip>
+                    </mat-cell>
+                  </ng-container>
+
+                  <!-- Items Count Column -->
+                  <ng-container matColumnDef="itemCount">
+                    <mat-header-cell *matHeaderCellDef>Items</mat-header-cell>
+                    <mat-cell *matCellDef="let order">{{ order.itemCount }}</mat-cell>
+                  </ng-container>
+
+                  <!-- Total Column -->
+                  <ng-container matColumnDef="total">
+                    <mat-header-cell *matHeaderCellDef>Total</mat-header-cell>
+                    <mat-cell *matCellDef="let order">{{ order.total | currency }}</mat-cell>
+                  </ng-container>
+
+                  <!-- Actions Column -->
+                  <ng-container matColumnDef="actions">
+                    <mat-header-cell *matHeaderCellDef>Actions</mat-header-cell>
+                    <mat-cell *matCellDef="let order">
+                      <button mat-icon-button color="primary" (click)="viewOrder(order)" matTooltip="View Order">
+                        <mat-icon>visibility</mat-icon>
+                      </button>
+                      <button mat-icon-button color="accent" (click)="editOrder(order)" matTooltip="Edit Order">
+                        <mat-icon>edit</mat-icon>
+                      </button>
+                      <button mat-icon-button (click)="addCalibration(order)" matTooltip="Add Calibration">
+                        <mat-icon>add_circle</mat-icon>
+                      </button>
+                      <button mat-icon-button (click)="printOrder(order)" matTooltip="Print Order">
+                        <mat-icon>print</mat-icon>
+                      </button>
+                    </mat-cell>
+                  </ng-container>
+
+                  <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+                  <mat-row *matRowDef="let row; columns: displayedColumns;" 
+                           (click)="selectOrder(row)" 
+                           [class.selected]="selectedOrder?.orderId === row.orderId"></mat-row>
+                </mat-table>
+
+                <mat-paginator [pageSizeOptions]="[10, 25, 50, 100]" 
+                               [pageSize]="25" 
+                               showFirstLastButtons>
+                </mat-paginator>
+              </div>
+
+              <div class="no-results" *ngIf="searchResults.length === 0 && hasSearched">
+                <mat-icon>search_off</mat-icon>
+                <h4>No orders found</h4>
+                <p>Try adjusting your search criteria and search again.</p>
+              </div>
+            </div>
+          </div>
+        </mat-tab>
+
+        <!-- Order Details Tab -->
+        <mat-tab label="Order Details" [disabled]="!selectedOrder">
+          <div class="tab-content" *ngIf="selectedOrder">
+            <div class="order-details">
+              <div class="details-header">
+                <h3>Order {{ selectedOrder.orderNo }}</h3>
+                <mat-chip [color]="getStatusColor(selectedOrder.status)">{{ selectedOrder.status }}</mat-chip>
+              </div>
+
+              <div class="details-grid">
+                <div class="detail-section">
+                  <h4>Order Information</h4>
+                  <div class="detail-item">
+                    <label>Order Number:</label>
+                    <span>{{ selectedOrder.orderNo }}</span>
+                  </div>
+                  <div class="detail-item">
+                    <label>Company:</label>
+                    <span>{{ selectedOrder.companyName }}</span>
+                  </div>
+                  <div class="detail-item">
+                    <label>Order Date:</label>
+                    <span>{{ selectedOrder.orderDate | date:'medium' }}</span>
+                  </div>
+                  <div class="detail-item">
+                    <label>Due Date:</label>
+                    <span>{{ selectedOrder.dueDate | date:'medium' }}</span>
+                  </div>
+                </div>
+
+                <div class="detail-section">
+                  <h4>Contact Information</h4>
+                  <div class="detail-item">
+                    <label>Contact Name:</label>
+                    <span>{{ selectedOrder.contactName || 'N/A' }}</span>
+                  </div>
+                  <div class="detail-item">
+                    <label>Phone:</label>
+                    <span>{{ selectedOrder.phone || 'N/A' }}</span>
+                  </div>
+                  <div class="detail-item">
+                    <label>Email:</label>
+                    <span>{{ selectedOrder.email || 'N/A' }}</span>
+                  </div>
+                </div>
+
+                <div class="detail-section">
+                  <h4>Order Summary</h4>
+                  <div class="detail-item">
+                    <label>Total Items:</label>
+                    <span>{{ selectedOrder.itemCount }}</span>
+                  </div>
+                  <div class="detail-item">
+                    <label>Subtotal:</label>
+                    <span>{{ selectedOrder.subtotal | currency }}</span>
+                  </div>
+                  <div class="detail-item">
+                    <label>Tax:</label>
+                    <span>{{ selectedOrder.tax | currency }}</span>
+                  </div>
+                  <div class="detail-item">
+                    <label>Total:</label>
+                    <span class="total-amount">{{ selectedOrder.total | currency }}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="order-items">
+                <h4>Order Items</h4>
+                <mat-table [dataSource]="selectedOrder.items || []" class="items-table">
+                  <ng-container matColumnDef="description">
+                    <mat-header-cell *matHeaderCellDef>Description</mat-header-cell>
+                    <mat-cell *matCellDef="let item">{{ item.description }}</mat-cell>
+                  </ng-container>
+
+                  <ng-container matColumnDef="serialNo">
+                    <mat-header-cell *matHeaderCellDef>Serial No</mat-header-cell>
+                    <mat-cell *matCellDef="let item">{{ item.serialNo }}</mat-cell>
+                  </ng-container>
+
+                  <ng-container matColumnDef="calType">
+                    <mat-header-cell *matHeaderCellDef>Cal Type</mat-header-cell>
+                    <mat-cell *matCellDef="let item">{{ item.calType }}</mat-cell>
+                  </ng-container>
+
+                  <ng-container matColumnDef="price">
+                    <mat-header-cell *matHeaderCellDef>Price</mat-header-cell>
+                    <mat-cell *matCellDef="let item">{{ item.price | currency }}</mat-cell>
+                  </ng-container>
+
+                  <ng-container matColumnDef="status">
+                    <mat-header-cell *matHeaderCellDef>Status</mat-header-cell>
+                    <mat-cell *matCellDef="let item">{{ item.status }}</mat-cell>
+                  </ng-container>
+
+                  <mat-header-row *matHeaderRowDef="itemColumns"></mat-header-row>
+                  <mat-row *matRowDef="let row; columns: itemColumns;"></mat-row>
+                </mat-table>
+              </div>
+            </div>
+          </div>
+        </mat-tab>
+      </mat-tab-group>
+    </mat-card-content>
+
+    <mat-card-actions align="end" *ngIf="selectedOrder">
+      <button mat-button (click)="clearSelection()">
+        <mat-icon>clear</mat-icon>
+        Clear Selection
+      </button>
+      <button mat-raised-button color="primary" (click)="addCalibration(selectedOrder)">
+        <mat-icon>add_circle</mat-icon>
+        Add Calibration
+      </button>
+    </mat-card-actions>
+  </mat-card>
+</div>

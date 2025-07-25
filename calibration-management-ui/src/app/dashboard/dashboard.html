@@ -1,0 +1,88 @@
+<div class="dashboard-container">
+  <div class="dashboard-header">
+    <h1>Calibration Management Dashboard</h1>
+    <p>Welcome to the modernized calibration management system</p>
+  </div>
+
+  <div class="stats-grid">
+    <mat-card class="stat-card">
+      <mat-card-header>
+        <mat-icon mat-card-avatar>assignment</mat-icon>
+        <mat-card-title>Total Calibrations</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="stat-number">{{ totalCalibrations }}</div>
+        <div class="stat-label">This Month</div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-card-header>
+        <mat-icon mat-card-avatar>pending</mat-icon>
+        <mat-card-title>Pending Orders</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="stat-number">{{ pendingOrders }}</div>
+        <div class="stat-label">Awaiting Processing</div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-card-header>
+        <mat-icon mat-card-avatar>business</mat-icon>
+        <mat-card-title>Active Companies</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="stat-number">{{ activeCompanies }}</div>
+        <div class="stat-label">Current Clients</div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <mat-card-header>
+        <mat-icon mat-card-avatar>schedule</mat-icon>
+        <mat-card-title>Due Soon</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="stat-number">{{ dueSoon }}</div>
+        <div class="stat-label">Next 7 Days</div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <div class="action-grid">
+    <div class="quick-actions">
+      <h2>Quick Actions</h2>
+      <div class="action-buttons">
+        <button mat-raised-button color="primary" routerLink="/calibration/entry">
+          <mat-icon>add_circle</mat-icon>
+          New Calibration
+        </button>
+        <button mat-raised-button color="accent" routerLink="/calibration/search">
+          <mat-icon>search</mat-icon>
+          Search Records
+        </button>
+        <button mat-raised-button routerLink="/order/search">
+          <mat-icon>receipt</mat-icon>
+          Manage Orders
+        </button>
+        <button mat-raised-button routerLink="/calibration/type-selection">
+          <mat-icon>category</mat-icon>
+          No Order Entry
+        </button>
+      </div>
+    </div>
+
+    <div class="recent-activity">
+      <h2>Recent Activity</h2>
+      <mat-list>
+        <mat-list-item *ngFor="let activity of recentActivities">
+          <mat-icon matListItemIcon>{{ activity.icon }}</mat-icon>
+          <div matListItemTitle>{{ activity.title }}</div>
+          <div matListItemLine>{{ activity.description }}</div>
+          <div matListItemMeta>{{ activity.timestamp | date:'short' }}</div>
+        </mat-list-item>
+      </mat-list>
+    </div>
+  </div>
+</div>
