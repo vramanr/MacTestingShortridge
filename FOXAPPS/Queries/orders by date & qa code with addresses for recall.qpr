@@ -1,0 +1,17 @@
+
+SELECT Invoice.co_id, Invoice.co_name, Invoice.order_no, Invoice.qa_code,;
+  Model_no.model_no, Model_no.serial_no, Model_no.cal_date,;
+  Company.s_addr1, Company.s_addr2, Company.s_city, Company.s_state,;
+  Company.s_zip, Company.s_country;
+ FROM ;
+     SHORTDATA!INVOICE ;
+    INNER JOIN SHORTDATA!MODEL_NO ;
+   ON  Invoice.order_no = Model_no.order_no ;
+    INNER JOIN shortdata!company ;
+   ON  Invoice.co_id = Company.co_id;
+ WHERE  Model_no.cal_date <= ( {^2006/06/12} );
+   AND  ( (  Model_no.cal_date >= ( {^2006/03/30} );
+   AND  AT("M",Model_no.serial_no) > ( 0 ) );
+   AND  Invoice.order_no = ( "R" ) );
+ ORDER BY Model_no.serial_no, Model_no.order_no, Invoice.qa_code;
+ INTO TABLE orders_by_date___qa_code_addresses.dbf  

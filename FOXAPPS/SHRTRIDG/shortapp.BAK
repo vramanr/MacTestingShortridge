@@ -1,0 +1,21 @@
+Label w:\foxapps\shrtridg\filelablong.lbx has the following errors:
+    Unknown LABLS - Undefined
+
+Label w:\foxapps\shrtridg\filelabshort.lbx has the following errors:
+    Unknown LABLS - Undefined
+
+Menu w:\foxapps\shrtridg\betsy.mnx has the following errors:
+    Report NOTAPRVD - Undefined
+
+Program w:\foxapps\tbrest.prg has the following errors:
+    Unknown GATBSETS - Undefined
+
+Form w:\foxapps\shrtridg\filelbl.scx has the following errors:
+    Label FILELABL - Undefined
+
+Form w:\foxapps\shrtridg\serial_search.scx has the following errors:
+    Unknown SERIALSEARCHSQL - Undefined
+
+Form w:\foxapps\shrtridg\docmain.scx has the following errors:
+    Unknown ISNUMERIC - Undefined
+

@@ -1,0 +1,10 @@
+SELECT Company.co_name, Company.s_addr1, Company.s_addr2, Company.s_city,;
+  Company.s_state, Company.s_zip;
+ FROM ;
+     shortdata!company ;
+    INNER JOIN shortdata!invoice ;
+   ON  Company.co_id = Invoice.co_id ;
+    INNER JOIN shortdata!model_no ;
+   ON  Invoice.order_no = Model_no.order_no;
+ WHERE  Invoice.inv_date > (01/01/2000);
+   AND  Model_no.model_no = ( "ADM-860" )

@@ -1,0 +1,13 @@
+
+SELECT Model_no.co_id, Model_no.co_name, Model_no.order_no,;
+  Model_no.model_no, Model_no.cal_date, Model_no.serial_no;
+ FROM ;
+     SHORTDATA!MODEL_NO;
+ WHERE  Model_no.model_no = ( "RECAL-83" );
+   AND  (  Model_no.cal_date > ( {^2003/01/01} );
+   OR  Model_no.model_no = ( "RECAL-80" );
+   AND  Model_no.cal_date > ( {^2003/01/01} );
+   OR  Model_no.model_no = ( "RECAL-80" );
+   AND  Model_no.cal_date = ( {^2003/01/01} ) );
+ ORDER BY Model_no.serial_no;
+ INTO TABLE w:\foxapps\queries\analogs.dbf  

@@ -1,0 +1,28 @@
+*******************************************************
+* PROGRAM NAME: TBREST.PRG                            *
+*-----------------------------------------------------*
+* This routine restores the system toolbars to        *
+* their saved state as defined in the array gaTbsets. *
+* Save this as TBREST.PRG                             *
+*******************************************************
+PROCEDURE TBREST
+	PRIVATE lnCnt
+
+	FOR lnCnt=1 TO ALEN(gaTbsets,1)
+	   IF gaTbsets(lnCnt,2)
+			 Show WINDOW (gaTbsets(lnCnt,1))
+	   ENDIF
+	ENDFOR
+	RETURN 
+ENDPROC	
+
+
+*!*	Save the Program, and run it. 
+*!*	When you run TBSAVE, all toolbars are hidden. You need to run TBREST to restore (unhide) them to make them visible. 
+*!*	Additional query words: toolbar tool bar standard hide 
+*!*	Keywords : kbcode kbDesigner kbVFp300 kbVFp500 kbVFp600 
+*!*	Version : 
+*!*	Platform : 
+*!*	Issue type : kbhowto 
+*!*	Technology : 
+

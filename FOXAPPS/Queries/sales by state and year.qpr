@@ -1,0 +1,14 @@
+
+SELECT Invoice.order_no, Invoice.inv_date, Company.co_id,;
+  Company.co_name, Company.s_state, Amount.amount;
+ FROM ;
+     SHORTDATA!INVOICE ;
+    INNER JOIN shortdata!company ;
+   ON  Invoice.co_id = Company.co_id ;
+    INNER JOIN shortdata!amount ;
+   ON  Invoice.order_no = Amount.order_no;
+ WHERE  Invoice.inv_date > ( {^2005/01/01} );
+   AND  (  Invoice.inv_date < ( {^2005/12/31} );
+   AND  Company.s_state = ( "FL" ) );
+ ORDER BY Invoice.qa_code;
+ INTO TABLE salesbystateandyear.dbf  

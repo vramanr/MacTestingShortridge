@@ -1,0 +1,22 @@
+
+SELECT Model_no.co_id, Model_no.co_name, Model_no.model_no,;
+  Model_no.serial_no, MAX(Model_no.cal_date);
+ FROM ;
+     shortdata!model_no;
+ WHERE ( ( ( ( ( (  ( order_no ) = ( "R0" );
+   AND  ( model_no ) = ( "RECAL-83" ) );
+   OR  (  Model_no.order_no = ( "R0" );
+   AND  Model_no.model_no = ( "RECAL-80" ) ) );
+   OR  (  Model_no.order_no = ( "R0" );
+   AND  ( model_no ) = ( "RECAL-78" ) ) );
+   OR  (  Model_no.order_no = ( "R0" );
+   AND  ( model_no ) = ( "80-83" ) ) );
+   OR  (  Model_no.order_no = ( "R0" );
+   AND  ( model_no ) = ( "CALCHK-80" ) ) );
+   OR  (  Model_no.order_no = ( "R0" );
+   AND  ( model_no ) = ( "CALCHK-83" ) ) );
+   OR  (  Model_no.order_no = ( "R0" );
+   AND  ( model_no ) = ( "RECAL-83-W" ) );
+ GROUP BY Model_no.co_id, Model_no.co_name, Model_no.model_no,;
+  Model_no.serial_no;
+ ORDER BY Model_no.serial_no

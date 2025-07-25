@@ -1,0 +1,86 @@
+PARAMETER cORDERNO, ADDRESSREPORT
+
+************************************
+* This program will:
+* 1.  Set the current directory to
+*	  the users directory 
+* 2.  Run the DOS file to change
+*	  the printer to the desired
+*	  printer for this report
+* 3.  Set the directory back to 
+*	  the default directory
+* 4.  Compile and Print the report
+* 5.  Set the current directory to
+*	  the users directory
+* 6.  Run the DOS file to change
+*	  the printer back to the 
+*	  default printer 
+* 7.  Call the user_D program to 
+*     set the default directory back
+************************************
+
+* 1 ********************************
+*u_path=""
+*u_path = left(sys(0), 6)
+*do u_path+".prg"
+
+* 2 ***********************************
+*run n_order
+
+* 3 ***********************************
+*do u_path+"_d.prg"
+
+* 4 ***********************************
+
+*ORDNO = "950376"
+*path=""
+*do ordRpath.prg
+
+
+addressreport=""
+
+
+*IF USED("ordrstat")
+   *jj
+*ELSE
+*	USE path+"ordrstat"
+*ENDIF
+
+
+*close all
+*do path.prg
+*use path+"company" in 1
+*do ordrpath.prg
+*use path+"order_de" in 2
+*use path+"ordrstat" in 3
+
+SELECT *;
+ FROM ORDER_DE, COMPANY, ORDRSTAT;
+ WHERE COMPANY.CO_ID = ORDER_DE.CO_ID;
+   AND ORDRSTAT.CO_ID = ORDER_DE.CO_ID;
+   AND (ORDRSTAT.ORDER_NO = ORDER_DE.ORDER_NO) AND;
+   ALLTRIM(ORDRSTAT.ORDER_NO) = ALLTRIM(cORDERNO);
+   AND NOT DELETED();
+   ORDER BY ORDER_DE.ENTRY_NO;
+ INTO CURSOR QUERY
+ 
+SELECT QUERY
+IF QUERY.ST_TYPE<>"NO CHANGE" 
+	ADDRESSREPORT="YES"
+ENDIF
+ 
+SELECT QUERY 
+REPORT FORM ORDRNTRY\ORDRNTRY.FRX FOR alltrim(ordrstat.order_no) = alltrim(cOrderN0) TO PRINTER PDSETUP NOCONSOLE
+
+
+
+
+* 5 ***********************************
+*do u_path+".prg"
+
+* 6 ***********************************
+*run default
+
+* 7 ***********************************
+*do u_path+"_d.prg"
+

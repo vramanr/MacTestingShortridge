@@ -1,0 +1,11 @@
+
+USE w:\foxapps\tables\model_no.dbf shared
+
+SELECT Model_no.serial_no, Model_no.cal_date, Model_no.co_id,;
+  Model_no.co_name;
+ FROM ;
+     SHORTDATA!MODEL_NO;
+ WHERE (  AT("W",Model_no.serial_no) > ( 0 );
+   AND  Model_no.cal_date > ( {^2011/08/02} ) );
+   AND  Model_no.cal_date < ( {^2012/06/29} );
+ ORDER BY Model_no.serial_no

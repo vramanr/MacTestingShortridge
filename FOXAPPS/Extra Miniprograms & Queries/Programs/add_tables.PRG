@@ -1,0 +1,37 @@
+
+ADD TABLE  w:\foxapps2\Foxapp\shrtridg\company
+ADD TABLE  w:\foxapps2\Foxapp\shrtridg\contact
+ADD TABLE  w:\foxapps2\Foxapp\shrtridg\quote_header
+ADD TABLE  w:\foxapps2\Foxapp\shrtridg\quote_detail
+ADD TABLE  w:\foxapps2\Foxapp\shrtridg\quote_comment
+ADD TABLE  w:\foxapps2\Foxapp\shrtridg\ordetail
+ADD TABLE  w:\foxapps2\Foxapp\shrtridg\quote_no
+ADD TABLE  w:\foxapps2\Foxapp\shrtridg\conumber
+ADD TABLE  w:\foxapps2\Foxapp\shrtridg\custom_i
+ADD TABLE  w:\foxapps2\Foxapp\shrtridg\custom
+ADD TABLE  w:\foxapps2\Foxapp\shrtridg\overdue
+ADD TABLE  w:\foxapps2\Foxapp\shrtridg\shipping
+ADD TABLE  w:\foxapps2\Foxapp\shrtridg\serialno
+ADD TABLE  w:\foxapps2\Foxapp\shrtridg\model_no
+ADD TABLE  w:\foxapps2\Foxapp\shrtridg\invoice
+ADD TABLE  w:\foxapps2\Foxapp\shrtridg\misc_check
+ADD TABLE  w:\foxapps2\Foxapp\shrtridg\partslst
+ADD TABLE  w:\foxapps2\Foxapp\shrtridg\partsize
+ADD TABLE  w:\foxapps2\Foxapp\shrtridg\users
+ADD TABLE  w:\foxapps2\Foxapp\shrtridg\ship_via
+ADD TABLE  w:\amount2\amount
+ADD TABLE  w:\amount2\pay_dtl
+ADD TABLE  w:\foxapps2\Foxapp\calibration\cal_info
+ADD TABLE  w:\foxapps2\Foxapp\repairs\precheck
+ADD TABLE  w:\foxapps2\Foxapp\repairs\order_no
+ADD TABLE  w:\foxapps2\Foxapp\repairs\pc_misc
+ADD TABLE  w:\foxapps2\Foxapp\ordrntry\ordrstat
+ADD TABLE  w:\foxapps2\Foxapp\ordrntry\order_de
+ADD TABLE  w:\foxapps2\Foxapp\ordrntry\order_no
+ADD TABLE  w:\foxapps2\Foxapp\ordrntry\p_ord_no
+
+ADD TABLE  w:\foxapps2\Foxapp\shrtridg\box_size
+ADD TABLE  w:\foxapps2\Foxapp\shrtridg\partslst
+ADD TABLE  w:\foxapps2\Foxapp\shrtridg\serial_no
+ADD TABLE  w:\foxapps2\Foxapp\shrtridg\conumber
+ADD TABLE  w:\foxapps2\Foxapp\shrtridg\users

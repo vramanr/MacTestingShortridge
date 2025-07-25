@@ -1,0 +1,11 @@
+
+SELECT Model_no.serial_no, Model_no.cal_date, Invoice.order_no,;
+  Invoice.co_id, Invoice.co_name, Invoice.qa_code;
+ FROM ;
+     SHORTDATA!MODEL_NO ;
+    INNER JOIN SHORTDATA!INVOICE ;
+   ON  Model_no.order_no = Invoice.order_no;
+ WHERE  AT("W",Model_no.serial_no) > ( 0 );
+   AND  (  Model_no.cal_date > ( {^2011/08/11} );
+   AND  Model_no.cal_date < ( {^2012/06/29} ) );
+ ORDER BY Model_no.serial_no, Invoice.co_id

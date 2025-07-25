@@ -1,0 +1,6 @@
+
+SELECT Orders_by_date___qa_code.*;
+ FROM ;
+     orders_by_date___qa_code;
+ WHERE  NOT (DELETED() );
+ INTO TABLE orders_by_date___qa_code_del.dbf  

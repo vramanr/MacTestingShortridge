@@ -1,0 +1,7 @@
+SELECT MODEL_NO.Serial_no, MODEL_NO.Cal_date, MODEL_NO.Co_name;
+    FROM 'SHORTDATA!Model_no' MODEL_NO;
+    GROUP BY MODEL_NO.Serial_no, MODEL_NO.Cal_date, MODEL_NO.Co_name;
+    ORDER BY MODEL_NO.Serial_no, MODEL_NO.Cal_date, MODEL_NO.Co_name;
+    INTO CURSOR SYS(2015)
+DO (_GENXTAB) WITH 'Query',.t.,.t.,.t.,,,,.t.,1,.t.
+BROWSE NOMODIFY

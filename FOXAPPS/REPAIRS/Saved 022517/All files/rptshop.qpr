@@ -1,0 +1,8 @@
+SELECT *;
+ FROM PRECHECK;
+ WHERE (shp_chnin < CTOD("01/01/77") or approved < CTOD("01/01/77") ;
+ or shp_packed < CTOD("01/01/77") or shipped < CTOD("01/01/77")) ;
+ AND NOT DELETED() AND METER <> "W" ;
+ INTO CURSOR RPTSHOP;
+ ORDER BY order_no
+REPORT FORM REPAIRS\RPTSHOP.FRX TO PRINTER PROMPT PREVIEW

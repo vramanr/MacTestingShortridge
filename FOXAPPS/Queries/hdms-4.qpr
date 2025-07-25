@@ -1,0 +1,10 @@
+
+SELECT Model_no.model_no, Model_no.serial_no, Model_no.cal_date;
+ FROM ;
+     SHORTDATA!MODEL_NO;
+ WHERE  AT("W",Model_no.serial_no) > ( 0 );
+   AND  (  Model_no.cal_date > ( {^2011/08/02} );
+   AND  Model_no.cal_date < ( {^2012/06/29} ) );
+ ORDER BY Model_no.serial_no;
+ INTO TABLE HDM-4.dbf 
+  
