@@ -18,6 +18,8 @@ builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IToleranceService, ToleranceService>();
 builder.Services.AddScoped<IReportGenerationService, ReportGenerationService>();
 builder.Services.AddScoped<IVfpBusinessLogicService, VfpBusinessLogicService>();
+builder.Services.AddScoped<IMultiModeCalibrationService, MultiModeCalibrationService>();
+builder.Services.AddScoped<IFormValidationService, FormValidationService>();
 
 builder.Services.AddControllers();
 

@@ -11,6 +11,8 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { CommonModule } from '@angular/common';
 import { CustomValidators } from '../../shared/validators/custom-validators';
+import { FormValidationService } from '../../shared/services/form-validation.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 interface MeasurementPoint {
   setPoint: number;
@@ -80,22 +82,20 @@ export class CalibrationEntry implements OnInit {
   constructor(
     private formBuilder: FormBuilder,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
+    private snackBar: MatSnackBar,
+    private formValidationService: FormValidationService
   ) {
     this.calibrationForm = this.formBuilder.group({
       orderNo: [''],
       coId: [''],
       serialNo: ['', [
         Validators.required,
-        Validators.minLength(3),
-        Validators.maxLength(50),
-        CustomValidators.serialNumber()
+        FormValidationService.serialNumberValidator()
       ]],
       modelNo: ['', [
         Validators.required,
-        Validators.minLength(2),
-        Validators.maxLength(50),
-        CustomValidators.modelNumber()
+        FormValidationService.modelNumberValidator()
       ]],
       manufacturer: ['', [
         Validators.required,
@@ -104,12 +104,9 @@ export class CalibrationEntry implements OnInit {
       ]],
       calType: ['', Validators.required],
       calMode: ['Standard', Validators.required],
-      techId: ['', [
-        Validators.required,
-        CustomValidators.technicianId()
-      ]],
+      techId: ['', Validators.required],
       calDate: [new Date(), Validators.required],
-      dueDate: ['', CustomValidators.calibrationDueDate()],
+      dueDate: ['', FormValidationService.calibrationDueDateValidator()],
       standardsUsed: [[], Validators.required],
       comments: ['', Validators.maxLength(500)],
       measurementPoints: this.formBuilder.array([])
@@ -131,16 +128,16 @@ export class CalibrationEntry implements OnInit {
       if (!this.isNoOrderMode) {
         this.calibrationForm.get('orderNo')?.setValidators([
           Validators.required,
-          CustomValidators.orderNumber()
+          FormValidationService.orderNumberValidator()
         ]);
         this.calibrationForm.get('coId')?.setValidators([
           Validators.required,
-          CustomValidators.companyCode()
+          FormValidationService.companyCodeValidator()
         ]);
       } else {
         this.calibrationForm.get('coId')?.setValidators([
           Validators.required,
-          CustomValidators.companyCode()
+          FormValidationService.companyCodeValidator()
         ]);
       }
       
@@ -161,16 +158,16 @@ export class CalibrationEntry implements OnInit {
     const measurementPointGroup = this.formBuilder.group({
       setPoint: [0, [
         Validators.required,
-        CustomValidators.calibrationReading()
+        FormValidationService.calibrationReadingValidator()
       ]],
       reading: [0, [
         Validators.required,
-        CustomValidators.calibrationReading()
+        FormValidationService.calibrationReadingValidator()
       ]],
       deviation: [{ value: 0, disabled: true }],
       tolerance: [0, [
         Validators.required,
-        CustomValidators.toleranceValue()
+        FormValidationService.toleranceValueValidator()
       ]]
     });
 
@@ -270,17 +267,49 @@ export class CalibrationEntry implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.calibrationForm.valid) {
-      const formData = {
-        ...this.calibrationForm.value,
-        measurementPoints: this.measurementPoints,
-        isNoOrder: this.isNoOrderMode
-      };
-      
-      console.log('Calibration data:', formData);
-      
-      this.router.navigate(['/dashboard']);
-    }
+    const calInfo = {
+      serialNo: this.calibrationForm.get('serialNo')?.value,
+      modelNo: this.calibrationForm.get('modelNo')?.value,
+      orderNo: this.calibrationForm.get('orderNo')?.value,
+      coId: this.calibrationForm.get('coId')?.value,
+      calType: this.calibrationForm.get('calType')?.value
+    };
+
+    const calData = this.measurementPoints.map(mp => ({
+      setPoint: mp.setPoint,
+      actualReading: mp.reading,
+      deviation: mp.deviation,
+      tolerance: mp.tolerance,
+      mode: this.calibrationForm.get('calMode')?.value
+    }));
+
+    this.formValidationService.validateModeSelection(calInfo.calType, [calInfo.calType]).subscribe({
+      next: (validation) => {
+        if (!validation.isValid) {
+          const errorMessages = Object.values(validation.errors).flat();
+          this.snackBar.open(errorMessages[0], 'Close', { duration: 5000 });
+          return;
+        }
+
+        if (this.calibrationForm.valid) {
+          const formData = {
+            ...this.calibrationForm.value,
+            measurementPoints: this.measurementPoints,
+            isNoOrder: this.isNoOrderMode
+          };
+          
+          console.log('Calibration data:', formData);
+          this.snackBar.open('Calibration saved successfully', 'Close', { duration: 3000 });
+          this.router.navigate(['/dashboard']);
+        } else {
+          this.snackBar.open('Please correct the form errors before submitting', 'Close', { duration: 5000 });
+        }
+      },
+      error: (error) => {
+        console.error('Calibration validation error:', error);
+        this.snackBar.open('Validation error occurred', 'Close', { duration: 3000 });
+      }
+    });
   }
 
   onSaveDraft(): void {

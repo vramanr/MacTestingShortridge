@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { FormValidationService } from '../../shared/services/form-validation.service';
 import { MatCardModule } from '@angular/material/card';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -153,11 +155,13 @@ export class OrderSearch implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private router: Router
+    private router: Router,
+    private snackBar: MatSnackBar,
+    private formValidationService: FormValidationService
   ) {
     this.searchForm = this.formBuilder.group({
-      orderNo: [''],
-      coId: [''],
+      orderNo: ['', [FormValidationService.orderNumberValidator()]],
+      coId: ['', [FormValidationService.companyCodeValidator()]],
       status: [''],
       dateFrom: [''],
       dateTo: ['']
@@ -169,6 +173,32 @@ export class OrderSearch implements OnInit {
   }
 
   onSearch(): void {
+    const orderNo = this.searchForm.get('orderNo')?.value || '';
+    const coId = this.searchForm.get('coId')?.value || '';
+    
+    if (!orderNo.trim() && !coId.trim()) {
+      this.snackBar.open('Search Criteria must be entered!', 'Close', { duration: 5000 });
+      return;
+    }
+
+    this.formValidationService.validateOrderSearch(coId, orderNo).subscribe({
+      next: (validation) => {
+        if (!validation.isValid) {
+          const errorMessages = Object.values(validation.errors).flat();
+          this.snackBar.open(errorMessages[0], 'Close', { duration: 5000 });
+          return;
+        }
+
+        this.performSearch();
+      },
+      error: (error) => {
+        console.error('Order search validation error:', error);
+        this.performSearch(); // Continue with search even if validation fails
+      }
+    });
+  }
+
+  private performSearch(): void {
     this.hasSearched = true;
     const criteria = this.searchForm.value;
     
@@ -179,6 +209,15 @@ export class OrderSearch implements OnInit {
              (!criteria.dateFrom || order.orderDate >= criteria.dateFrom) &&
              (!criteria.dateTo || order.orderDate <= criteria.dateTo);
     });
+
+    if (this.searchResults.length === 0) {
+      this.snackBar.open('Company or Order not found.', 'Close', { duration: 3000 });
+    } else if (this.searchResults.length === 1) {
+      const order = this.searchResults[0];
+      this.handleSingleOrderFound(order);
+    } else {
+      this.snackBar.open(`Found ${this.searchResults.length} orders`, 'Close', { duration: 3000 });
+    }
 
     console.log('Search criteria:', criteria);
     console.log('Search results:', this.searchResults);
@@ -237,8 +276,32 @@ export class OrderSearch implements OnInit {
     return company ? company.coName : '';
   }
 
-  private getCompanyIdByName(companyName: string): string {
+  private  getCompanyIdByName(companyName: string): string {
     const company = this.companies.find(c => c.coName === companyName);
     return company ? company.coId : '';
+  }
+
+  private handleSingleOrderFound(order: any): void {
+    const orderData = {
+      orderNo: order.orderNo,
+      coId: this.getCompanyIdByName(order.companyName),
+      companyName: order.companyName,
+    };
+
+    this.router.navigate(['/calibration/type-selection'], { 
+      queryParams: { 
+        orderNo: order.orderNo,
+        coId: this.getCompanyIdByName(order.companyName)
+      } 
+    });
+  }
+
+  getErrorMessage(fieldName: string): string {
+    const field = this.searchForm.get(fieldName);
+    if (field?.errors) {
+      const firstError = Object.keys(field.errors)[0];
+      return field.errors[firstError]?.message || `${fieldName} is invalid`;
+    }
+    return '';
   }
 }

@@ -6,7 +6,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { CommonModule } from '@angular/common';
+import { FormValidationService } from '../../shared/services/form-validation.service';
 
 interface CalibrationTypeDescription {
   title: string;
@@ -125,7 +127,9 @@ export class CalibrationTypeSelection implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private router: Router
+    private router: Router,
+    private snackBar: MatSnackBar,
+    private formValidationService: FormValidationService
   ) {
     this.calibrationTypeForm = this.formBuilder.group({
       calType: ['', Validators.required]
@@ -139,10 +143,33 @@ export class CalibrationTypeSelection implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.calibrationTypeForm.valid) {
-      const selectedType = this.calibrationTypeForm.get('calType')?.value;
-      this.router.navigate(['/calibration/entry', 'no-order', selectedType]);
+    const selectedType = this.calibrationTypeForm.get('calType')?.value;
+    
+    if (!selectedType || selectedType.trim() === '') {
+      this.snackBar.open('Please select a calibration type.', 'Close', { duration: 5000 });
+      return;
     }
+
+    this.formValidationService.validateCalibrationTypeSelection(selectedType).subscribe({
+      next: (validation: any) => {
+        if (!validation.isValid) {
+          const errorMessages = Object.values(validation.errors).flat() as string[];
+          this.snackBar.open(errorMessages[0], 'Close', { duration: 5000 });
+          return;
+        }
+
+        if (this.calibrationTypeForm.valid) {
+          this.snackBar.open(`Selected ${selectedType} calibration type`, 'Close', { duration: 3000 });
+          this.router.navigate(['/calibration/entry', 'no-order', selectedType]);
+        } else {
+          this.snackBar.open('Please correct the form errors before proceeding', 'Close', { duration: 5000 });
+        }
+      },
+      error: (error: any) => {
+        console.error('Calibration type validation error:', error);
+        this.router.navigate(['/calibration/entry', 'no-order', selectedType]);
+      }
+    });
   }
 
   onCancel(): void {

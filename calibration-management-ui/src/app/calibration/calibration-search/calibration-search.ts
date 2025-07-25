@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { FormValidationService } from '../../shared/services/form-validation.service';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -13,6 +15,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { CommonModule } from '@angular/common';
 
 interface CalibrationRecord {
@@ -54,6 +57,7 @@ interface Technician {
     MatPaginatorModule,
     MatChipsModule,
     MatTooltipModule,
+    MatSnackBarModule,
     CommonModule
   ],
   templateUrl: './calibration-search.html',
@@ -140,11 +144,13 @@ export class CalibrationSearch implements OnInit {
 
   constructor(
     private formBuilder: FormBuilder,
-    private router: Router
+    private router: Router,
+    private snackBar: MatSnackBar,
+    private formValidationService: FormValidationService
   ) {
     this.searchForm = this.formBuilder.group({
-      serialNo: [''],
-      orderNo: [''],
+      serialNo: ['', [FormValidationService.serialNumberValidator()]],
+      orderNo: ['', [FormValidationService.orderNumberValidator()]],
       coId: [''],
       calType: [''],
       techId: [''],
@@ -159,6 +165,17 @@ export class CalibrationSearch implements OnInit {
   }
 
   onSearch(): void {
+    const orderNo = this.searchForm.get('orderNo')?.value || '';
+    const serialNo = this.searchForm.get('serialNo')?.value || '';
+    
+    const validation = this.formValidationService.validateSearchCriteria(orderNo, serialNo);
+    
+    if (!validation.isValid) {
+      const errorMessages = Object.values(validation.errors).flat();
+      this.snackBar.open(errorMessages[0], 'Close', { duration: 5000 });
+      return;
+    }
+
     this.hasSearched = true;
     const criteria = this.searchForm.value;
     
@@ -172,6 +189,15 @@ export class CalibrationSearch implements OnInit {
              (!criteria.dateFrom || record.calDate >= criteria.dateFrom) &&
              (!criteria.dateTo || record.calDate <= criteria.dateTo);
     });
+
+    if (this.searchResults.length === 0) {
+      this.snackBar.open('Record not found! Try Again', 'Close', { duration: 3000 });
+    } else if (this.searchResults.length === 1) {
+      const record = this.searchResults[0];
+      this.handleSingleRecord(record);
+    } else {
+      this.snackBar.open(`Found ${this.searchResults.length} records - [F2] to Select`, 'Close', { duration: 3000 });
+    }
 
     console.log('Search criteria:', criteria);
     console.log('Search results:', this.searchResults);
@@ -193,7 +219,20 @@ export class CalibrationSearch implements OnInit {
   }
 
   editRecord(record: CalibrationRecord): void {
-    this.router.navigate(['/calibration/edit', record.calId]);
+    this.formValidationService.validateEditPermissions(record.calId, 'EDIT').subscribe({
+      next: (validation) => {
+        if (validation.isValid) {
+          this.router.navigate(['/calibration/edit', record.calId]);
+        } else {
+          const errorMessages = Object.values(validation.errors).flat();
+          this.snackBar.open(errorMessages[0], 'Close', { duration: 5000 });
+        }
+      },
+      error: (error) => {
+        console.error('Edit permission validation error:', error);
+        this.snackBar.open('Unable to validate edit permissions', 'Close', { duration: 3000 });
+      }
+    });
   }
 
   viewRecord(record: CalibrationRecord): void {
@@ -226,5 +265,28 @@ export class CalibrationSearch implements OnInit {
   private getTechnicianName(techId: string): string {
     const technician = this.technicians.find(t => t.techId === techId);
     return technician ? technician.techName : '';
+  }
+
+  private handleSingleRecord(record: CalibrationRecord): void {
+    const allowEdit = record.status !== 'Complete'; // Mock logic
+    
+    if (!allowEdit) {
+      this.router.navigate(['/calibration/edit', record.calId], { 
+        queryParams: { mode: 'EDIT' } 
+      });
+    } else {
+      this.router.navigate(['/calibration/edit', record.calId], { 
+        queryParams: { mode: 'FULL EDIT' } 
+      });
+    }
+  }
+
+  getErrorMessage(fieldName: string): string {
+    const field = this.searchForm.get(fieldName);
+    if (field?.errors) {
+      const firstError = Object.keys(field.errors)[0];
+      return field.errors[firstError]?.message || `${fieldName} is invalid`;
+    }
+    return '';
   }
 }
