@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using CalibrationManagement.Application.Validators;
 
 namespace CalibrationManagement.Application.DTOs
 {
@@ -19,6 +20,7 @@ namespace CalibrationManagement.Application.DTOs
         
         public decimal? PercentDeviation { get; set; }
         
+        [ToleranceValue]
         public decimal? Tolerance { get; set; }
         
         [StringLength(10)]
@@ -41,11 +43,14 @@ namespace CalibrationManagement.Application.DTOs
         public string? Mode { get; set; }
         
         [Required]
+        [CalibrationReading]
         public decimal SetPoint { get; set; }
         
         [Required]
+        [CalibrationReading]
         public decimal ActualReading { get; set; }
         
+        [ToleranceValue]
         public decimal? Tolerance { get; set; }
         
         [Required]
@@ -74,6 +79,7 @@ namespace CalibrationManagement.Application.DTOs
         
         public decimal? PercentDeviation { get; set; }
         
+        [ToleranceValue]
         public decimal? Tolerance { get; set; }
         
         [StringLength(10)]

@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using CalibrationManagement.Application.Validators;
 
 namespace CalibrationManagement.Application.DTOs
 {
@@ -11,9 +12,11 @@ namespace CalibrationManagement.Application.DTOs
         public string CalNo { get; set; } = string.Empty;
         
         [StringLength(20)]
+        [CompanyCode]
         public string? CoId { get; set; }
         
         [StringLength(50)]
+        [OrderNumber]
         public string? OrderNo { get; set; }
         
         [StringLength(100)]
@@ -57,17 +60,21 @@ namespace CalibrationManagement.Application.DTOs
     public class CreateCalInfoDto
     {
         [StringLength(20)]
+        [CompanyCode]
         public string? CoId { get; set; }
         
         [StringLength(50)]
+        [OrderNumber]
         public string? OrderNo { get; set; }
         
         [Required]
         [StringLength(100)]
+        [SerialNumber]
         public string SerialNo { get; set; } = string.Empty;
         
         [Required]
         [StringLength(100)]
+        [ModelNumber]
         public string ModelNo { get; set; } = string.Empty;
         
         public DateTime? CalDate { get; set; }
@@ -103,9 +110,11 @@ namespace CalibrationManagement.Application.DTOs
         public string CalNo { get; set; } = string.Empty;
         
         [StringLength(20)]
+        [CompanyCode]
         public string? CoId { get; set; }
         
         [StringLength(50)]
+        [OrderNumber]
         public string? OrderNo { get; set; }
         
         [StringLength(100)]
