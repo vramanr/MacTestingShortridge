@@ -14,6 +14,14 @@ namespace CalibrationManagement.Core.Entities
         [StringLength(100)]
         public string TechName { get; set; } = string.Empty;
 
+        [Column("tech_id")]
+        [StringLength(20)]
+        public string? TechId { get; set; }
+
+        [Column("tech_title")]
+        [StringLength(50)]
+        public string? TechTitle { get; set; }
+
         [Column("tech_initials")]
         [StringLength(10)]
         public string? TechInitials { get; set; }

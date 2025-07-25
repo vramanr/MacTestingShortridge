@@ -47,7 +47,7 @@ namespace CalibrationManagement.API.Controllers
             [FromQuery] string? status,
             [FromQuery] string? techId)
         {
-            var query = _context.CalInfos
+            var query = _context.CalInfo
                 .Include(c => c.Company)
                 .Where(c => !c.Deleted);
 
@@ -67,7 +67,7 @@ namespace CalibrationManagement.API.Controllers
 
             var report = new CalibrationSummaryReport
             {
-                TotalCalibrations = calibrations.Count,
+                TotalCalibrations = calibrations.Count(),
                 CompletedCalibrations = calibrations.Count(c => c.CalStatus == "COMPLETED"),
                 PendingCalibrations = calibrations.Count(c => c.CalStatus == "PENDING"),
                 InProgressCalibrations = calibrations.Count(c => c.CalStatus == "IN_PROGRESS"),
@@ -85,7 +85,7 @@ namespace CalibrationManagement.API.Controllers
         {
             var cutoffDate = DateTime.UtcNow.AddDays(daysAhead);
 
-            var dueCalibrations = await _context.CalInfos
+            var dueCalibrations = await _context.CalInfo
                 .Include(c => c.Company)
                 .Where(c => !c.Deleted && 
                            c.DueDate.HasValue && 
@@ -113,7 +113,7 @@ namespace CalibrationManagement.API.Controllers
             var start = startDate ?? DateTime.UtcNow.AddDays(-30);
             var end = endDate ?? DateTime.UtcNow;
 
-            var workloadData = await _context.CalInfos
+            var workloadData = await _context.CalInfo
                 .Where(c => !c.Deleted && 
                            c.CalDate >= start && 
                            c.CalDate <= end)
@@ -147,7 +147,7 @@ namespace CalibrationManagement.API.Controllers
             var start = startDate ?? DateTime.UtcNow.AddDays(-90);
             var end = endDate ?? DateTime.UtcNow;
 
-            var activityData = await _context.CalInfos
+            var activityData = await _context.CalInfo
                 .Include(c => c.Company)
                 .Where(c => !c.Deleted && 
                            c.CalDate >= start && 

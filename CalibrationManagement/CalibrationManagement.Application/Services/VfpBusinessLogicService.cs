@@ -7,104 +7,208 @@ namespace CalibrationManagement.Application.Services
 {
     public interface IVfpBusinessLogicService
     {
-        Task<string> ProcessCalibrationDataAsync(int calNo, string reading, string setPoint, string mode, string type, string calType);
-        Task<bool> ValidateCalibrationToleranceAsync(int calNo, decimal deviation);
-        Task<string> FormatCalibrationReadingAsync(string reading, string setPoint);
-        Task<decimal> CalculateAllowedDeviationAsync(decimal reading, string mode, string calType);
-        Task UpdateCalibrationDataFieldAsync(int calNo, string fieldType, string value);
+        string Justification(string cReading);
+        string Justification(string cReading, string cSetPoint);
+        string SetPointDecimal(string cReading, string cSetPoint, string cMode, decimal nDeviation, string cType, string cCalType, string cMode2);
+        string PadZero(string cReading, string cSetPoint);
+        decimal CalculateDeviation(decimal setPoint, decimal reading);
+        decimal CalculatePercentDeviation(decimal deviation, decimal setPoint);
+        bool IsWithinTolerance(decimal deviation, decimal tolerance);
+        bool IsWithinTolerance(decimal actual, decimal expected, decimal tolerance);
+        bool IsValidCalibrationType(string calType);
+        List<string> GetCalibrationModes(string calType);
+        Task<decimal> GetToleranceAsync(string mode, string calType);
     }
 
     public class VfpBusinessLogicService : IVfpBusinessLogicService
     {
         private readonly ILogger<VfpBusinessLogicService> _logger;
         private readonly CalibrationDbContext _context;
-        private readonly ICalibrationCalculationService _calculationService;
 
         public VfpBusinessLogicService(
             ILogger<VfpBusinessLogicService> logger,
-            CalibrationDbContext context,
-            ICalibrationCalculationService calculationService)
+            CalibrationDbContext context)
         {
             _logger = logger;
             _context = context;
-            _calculationService = calculationService;
         }
 
-        public async Task<string> ProcessCalibrationDataAsync(int calNo, string reading, string setPoint, string mode, string type, string calType)
+        public string Justification(string cReading)
         {
-            try
-            {
-                if (string.IsNullOrEmpty(reading) || string.IsNullOrEmpty(setPoint))
-                    return "";
+            if (string.IsNullOrEmpty(cReading))
+                return string.Empty;
 
-                var paddedReading = _calculationService.PadZero(reading, setPoint);
+            return cReading.Trim();
+        }
+
+        public string SetPointDecimal(string cReading, string cSetPoint, string cMode, decimal nDeviation, string cType, string cCalType)
+        {
+            if (string.IsNullOrEmpty(cSetPoint))
+                return string.Empty;
+
+            var trimmedSetPoint = cSetPoint.Trim();
+            int nDecimal;
+
+            if (trimmedSetPoint.IndexOf('.') == -1)
+            {
+                nDecimal = 0;
+            }
+            else
+            {
+                nDecimal = trimmedSetPoint.Length - trimmedSetPoint.IndexOf('.') - 1;
+            }
+
+            decimal calculatedDeviation = nDeviation;
+
+            if (cType == "ALLOW")
+            {
                 
-                if (decimal.TryParse(paddedReading, out decimal numericReading))
+                if (decimal.TryParse(cReading, out decimal readingValue))
                 {
-                    var deviation = type == "ALLOW" 
-                        ? await CalculateAllowedDeviationAsync(numericReading, mode, calType)
-                        : numericReading;
-
-                    var formattedResult = _calculationService.SetPointDecimal(paddedReading, setPoint, mode, deviation, type, calType);
-                    
-                    await UpdateCalibrationDataFieldAsync(calNo, type, formattedResult);
-                    
-                    return formattedResult;
+                    decimal percent = 0.001m; // atolerances[1,1] - percentage tolerance
+                    decimal constant = 0.0001m; // atolerances[1,2] - constant tolerance
+                    calculatedDeviation = readingValue * percent + constant;
                 }
+            }
 
-                return paddedReading;
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error processing calibration data for CalNo: {CalNo}, Type: {Type}", calNo, type);
-                throw;
-            }
+            var deviationStr = calculatedDeviation.ToString($"F{nDecimal}");
+            var formattedDeviation = Justification(deviationStr.Trim());
+
+            return formattedDeviation;
         }
 
-        public async Task<bool> ValidateCalibrationToleranceAsync(int calNo, decimal deviation)
+        public string PadZero(string cReading, string cSetPoint)
         {
-            try
+            if (string.IsNullOrEmpty(cReading))
+                return string.Empty;
+
+            if (string.IsNullOrEmpty(cSetPoint))
+                return cReading.Trim();
+
+            var reading = cReading.Trim();
+            var setPoint = cSetPoint.Trim();
+
+            if (setPoint.IndexOf('.') == -1)
             {
-                var calData = await _context.CalData
-                    .FirstOrDefaultAsync(cd => cd.CalNo == calNo);
+                return reading;
+            }
 
-                if (calData?.AllowDev == null)
-                    return false;
+            var nSetPointDecimal = setPoint.Length - setPoint.IndexOf('.') - 1;
+            var nPosition = reading.IndexOf('.');
+            var nLength = reading.Length;
+            var nReadingDecimal = nPosition == -1 ? 0 : reading.Length - nPosition - 1;
 
-                if (decimal.TryParse(calData.AllowDev, out decimal allowedDeviation))
+            if (nPosition == 0)
+            {
+                reading = "0" + reading;
+                nPosition = 1;
+                nLength++;
+                nReadingDecimal = reading.Length - nPosition - 1;
+            }
+
+            if (nPosition == -1 && nSetPointDecimal > 0)
+            {
+                switch (nSetPointDecimal)
                 {
-                    return Math.Abs(deviation) <= Math.Abs(allowedDeviation);
+                    case 1:
+                        reading = reading + ".0";
+                        break;
+                    case 2:
+                        reading = reading + ".00";
+                        break;
+                    case 3:
+                        reading = reading + ".000";
+                        break;
+                    case 4:
+                        reading = reading + ".0000";
+                        break;
                 }
-
-                return false;
+                return reading;
             }
-            catch (Exception ex)
+
+            if (nLength == nPosition + 1 && nPosition > 0)
             {
-                _logger.LogError(ex, "Error validating calibration tolerance for CalNo: {CalNo}", calNo);
-                throw;
+                if (nSetPointDecimal == 0)
+                {
+                    reading = reading.Substring(0, reading.Length - 1);
+                }
+                else
+                {
+                    switch (nSetPointDecimal)
+                    {
+                        case 1:
+                            reading = reading + "0";
+                            break;
+                        case 2:
+                            reading = reading + "00";
+                            break;
+                        case 3:
+                            reading = reading + "000";
+                            break;
+                        case 4:
+                            reading = reading + "0000";
+                            break;
+                    }
+                }
+                return reading;
             }
-        }
 
-        public async Task<string> FormatCalibrationReadingAsync(string reading, string setPoint)
-        {
-            try
+            if (nPosition > 0 && nLength != nPosition + 1)
             {
-                if (string.IsNullOrEmpty(reading))
-                    return "";
-
-                var paddedReading = _calculationService.PadZero(reading, setPoint);
-                var justifiedReading = _calculationService.Justification(paddedReading);
+                var decimalDiff = nSetPointDecimal - nReadingDecimal;
                 
-                return justifiedReading;
+                if (decimalDiff > 0)
+                {
+                    switch (decimalDiff)
+                    {
+                        case 1:
+                            reading = reading + "0";
+                            break;
+                        case 2:
+                            reading = reading + "00";
+                            break;
+                        case 3:
+                            reading = reading + "000";
+                            break;
+                        case 4:
+                            reading = reading + "0000";
+                            break;
+                    }
+                }
+                else if (decimalDiff < 0)
+                {
+                    var integerPart = reading.Substring(0, nPosition);
+                    var decimalPart = reading.Substring(nPosition + 1);
+                    if (decimalPart.Length > nSetPointDecimal)
+                    {
+                        decimalPart = decimalPart.Substring(0, nSetPointDecimal);
+                    }
+                    reading = integerPart + "." + decimalPart;
+                }
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error formatting calibration reading: {Reading}", reading);
-                throw;
-            }
+
+            return reading;
         }
 
-        public async Task<decimal> CalculateAllowedDeviationAsync(decimal reading, string mode, string calType)
+        public decimal CalculateDeviation(decimal setPoint, decimal reading)
+        {
+            return reading - setPoint;
+        }
+
+        public decimal CalculatePercentDeviation(decimal deviation, decimal setPoint)
+        {
+            if (setPoint == 0)
+                return 0;
+
+            return (deviation / setPoint) * 100;
+        }
+
+        public bool IsWithinTolerance(decimal deviation, decimal tolerance)
+        {
+            return Math.Abs(deviation) <= tolerance;
+        }
+
+        public async Task<decimal> GetToleranceAsync(string mode, string calType)
         {
             try
             {
@@ -113,50 +217,56 @@ namespace CalibrationManagement.Application.Services
 
                 if (tolerance != null)
                 {
-                    var percentDeviation = reading * (tolerance.Percent ?? 0);
-                    var constantDeviation = tolerance.Constant ?? 0;
-                    return percentDeviation + constantDeviation;
+                    return (tolerance.Percent ?? 0) + (tolerance.Constant ?? 0);
                 }
 
-                return reading * 0.01m + 0.001m;
+                return 0.001m;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error calculating allowed deviation for Mode: {Mode}, CalType: {CalType}", mode, calType);
-                throw;
+                _logger.LogError(ex, "Error getting tolerance for Mode: {Mode}, CalType: {CalType}", mode, calType);
+                return 0.001m;
             }
         }
 
-        public async Task UpdateCalibrationDataFieldAsync(int calNo, string fieldType, string value)
+        public string Justification(string cReading, string cSetPoint)
         {
-            try
-            {
-                var calData = await _context.CalData
-                    .FirstOrDefaultAsync(cd => cd.CalNo == calNo);
+            return Justification(cReading);
+        }
 
-                if (calData != null)
-                {
-                    switch (fieldType.ToUpper())
-                    {
-                        case "ALLOW":
-                            calData.AllowDev = value;
-                            break;
-                        case "ACTUAL":
-                            calData.ActualDev = value;
-                            break;
-                        case "PERCENT":
-                            calData.PercntDev = value;
-                            break;
-                    }
+        public string SetPointDecimal(string cReading, string cSetPoint, string cMode, decimal nDeviation, string cType, string cCalType, string cMode2)
+        {
+            return SetPointDecimal(cReading, cSetPoint, cMode, nDeviation, cType, cCalType);
+        }
 
-                    await _context.SaveChangesAsync();
-                }
-            }
-            catch (Exception ex)
+        public bool IsWithinTolerance(decimal actual, decimal expected, decimal tolerance)
+        {
+            var deviation = Math.Abs(actual - expected);
+            return deviation <= tolerance;
+        }
+
+        public bool IsValidCalibrationType(string calType)
+        {
+            if (string.IsNullOrEmpty(calType))
+                return false;
+
+            var validTypes = new[] { "ADM", "HDM", "MultiTemp", "FH" };
+            return validTypes.Contains(calType);
+        }
+
+        public List<string> GetCalibrationModes(string calType)
+        {
+            if (string.IsNullOrEmpty(calType))
+                return new List<string>();
+
+            return calType switch
             {
-                _logger.LogError(ex, "Error updating calibration data field {FieldType} for CalNo: {CalNo}", fieldType, calNo);
-                throw;
-            }
+                "ADM" => new List<string> { "Temperature", "Humidity", "Pressure" },
+                "HDM" => new List<string> { "Humidity", "Dew Point" },
+                "MultiTemp" => new List<string> { "Temperature", "Multi-Point" },
+                "FH" => new List<string> { "Flow", "Humidity" },
+                _ => new List<string>()
+            };
         }
     }
 }

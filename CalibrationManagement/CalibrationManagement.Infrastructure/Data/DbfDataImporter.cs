@@ -48,7 +48,7 @@ namespace CalibrationManagement.Infrastructure.Data
                     CalNo = GetStringValue(record, "cal_no"),
                     CoId = GetStringValue(record, "co_id"),
                     SerialNo = GetStringValue(record, "serial_no"),
-                    ModelNo = GetStringValue(record, "model_no"),
+                    ModelNumber = GetStringValue(record, "model_no"),
                     CalDate = GetDateValue(record, "cal_date"),
                     DueDate = GetDateValue(record, "due_date"),
                     CalType = GetStringValue(record, "cal_type"),
@@ -62,7 +62,7 @@ namespace CalibrationManagement.Infrastructure.Data
                     Deleted = GetBoolValue(record, "deleted")
                 };
 
-                _context.CalInfos.Add(calInfo);
+                _context.CalInfo.Add(calInfo);
             }
 
             await _context.SaveChangesAsync();
@@ -151,7 +151,7 @@ namespace CalibrationManagement.Infrastructure.Data
                     Deleted = GetBoolValue(record, "deleted")
                 };
 
-                _context.Companies.Add(company);
+                _context.Company.Add(company);
             }
 
             await _context.SaveChangesAsync();
@@ -204,7 +204,7 @@ namespace CalibrationManagement.Infrastructure.Data
                     Deleted = GetBoolValue(record, "deleted")
                 };
 
-                _context.CalSetups.Add(calSetup);
+                _context.CalSetup.Add(calSetup);
             }
 
             await _context.SaveChangesAsync();
@@ -282,7 +282,7 @@ namespace CalibrationManagement.Infrastructure.Data
                     Deleted = GetBoolValue(record, "deleted")
                 };
 
-                _context.Orders.Add(order);
+                _context.OrdrStats.Add(order);
             }
 
             await _context.SaveChangesAsync();
@@ -301,7 +301,7 @@ namespace CalibrationManagement.Infrastructure.Data
                     OrderNo = GetStringValue(record, "order_no"),
                     LineNo = GetIntValue(record, "line_no"),
                     SerialNo = GetStringValue(record, "serial_no"),
-                    ModelNo = GetStringValue(record, "model_no"),
+                    ModelNumber = GetStringValue(record, "model_no"),
                     Description = GetStringValue(record, "description"),
                     Quantity = GetIntValue(record, "quantity"),
                     UnitPrice = GetDecimalValue(record, "unit_price"),
@@ -327,7 +327,7 @@ namespace CalibrationManagement.Infrastructure.Data
                 var modelNo = new ModelNo
                 {
                     SerialNo = GetStringValue(record, "serial_no") ?? string.Empty,
-                    ModelNo = GetStringValue(record, "model_no"),
+                    ModelNumber = GetStringValue(record, "model_no"),
                     CoId = GetStringValue(record, "co_id"),
                     Description = GetStringValue(record, "description"),
                     CalType = GetStringValue(record, "cal_type"),

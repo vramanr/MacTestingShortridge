@@ -31,6 +31,26 @@ namespace CalibrationManagement.Core.Entities
         [StringLength(20)]
         public string? ToleranceType { get; set; }
 
+        [Column("mode")]
+        [StringLength(50)]
+        public string? Mode { get; set; }
+
+        [Column("percent_tolerance")]
+        [Precision(15, 6)]
+        public decimal? PercentTolerance { get; set; }
+
+        [Column("constant_tolerance")]
+        [Precision(15, 6)]
+        public decimal? ConstantTolerance { get; set; }
+
+        [Column("percent")]
+        [Precision(15, 6)]
+        public decimal? Percent { get; set; }
+
+        [Column("constant")]
+        [Precision(15, 6)]
+        public decimal? Constant { get; set; }
+
         [Column("units")]
         [StringLength(20)]
         public string? Units { get; set; }

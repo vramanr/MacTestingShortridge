@@ -11,12 +11,28 @@ namespace CalibrationManagement.Core.Entities
         [Column("order_detail_id")]
         public Guid OrderDetailId { get; set; } = Guid.NewGuid();
 
+        [Column("serial_no")]
+        [StringLength(100)]
+        public string? SerialNo { get; set; }
+
+        [Column("model_no")]
+        [StringLength(100)]
+        public string? ModelNumber { get; set; }
+
+        [Column("total_price")]
+        [Precision(12, 2)]
+        public decimal? TotalPrice { get; set; }
+
         [Column("order_no")]
         [StringLength(50)]
         public string? OrderNo { get; set; }
 
         [Column("line_no")]
         public int? LineNo { get; set; }
+
+        [Column("item_description")]
+        [StringLength(500)]
+        public string? ItemDescription { get; set; }
 
         [Column("part_no")]
         [StringLength(100)]

@@ -9,16 +9,16 @@ namespace CalibrationManagement.Infrastructure.Data
         {
         }
 
-        public DbSet<CalInfo> CalInfos { get; set; }
+        public DbSet<CalInfo> CalInfo { get; set; }
         public DbSet<CalData> CalData { get; set; }
         public DbSet<CalStandards> CalStandards { get; set; }
-        public DbSet<CalSetup> CalSetups { get; set; }
+        public DbSet<CalSetup> CalSetup { get; set; }
         public DbSet<CalTechs> CalTechs { get; set; }
         public DbSet<Tolerances> Tolerances { get; set; }
 
-        public DbSet<Company> Companies { get; set; }
+        public DbSet<Company> Company { get; set; }
         public DbSet<Contact> Contacts { get; set; }
-        public DbSet<OrdrStat> Orders { get; set; }
+        public DbSet<OrdrStat> OrdrStats { get; set; }
         public DbSet<OrDetail> OrderDetails { get; set; }
         public DbSet<ModelNo> ModelNumbers { get; set; }
 
@@ -72,7 +72,7 @@ namespace CalibrationManagement.Infrastructure.Data
                 .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Company>()
-                .HasMany(c => c.Orders)
+                .HasMany(c => c.OrdrStats)
                 .WithOne(o => o.Company)
                 .HasForeignKey(o => o.CoId)
                 .HasPrincipalKey(c => c.CoId)

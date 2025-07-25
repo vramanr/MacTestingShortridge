@@ -10,13 +10,26 @@ namespace CalibrationManagement.Core.Entities
         [Column("model_id")]
         public Guid ModelId { get; set; } = Guid.NewGuid();
 
-        [Column("serial_no")]
-        [StringLength(100)]
-        public string SerialNo { get; set; } = string.Empty;
+        [Column("model_no_id")]
+        public Guid ModelNoId { get; set; } = Guid.NewGuid();
 
         [Column("model_no")]
         [StringLength(100)]
         public string? ModelNumber { get; set; }
+
+        [Column("description")]
+        [StringLength(500)]
+        public string? Description { get; set; }
+
+        [Column("cal_interval")]
+        public int? CalInterval { get; set; }
+
+        [Column("active")]
+        public bool? Active { get; set; }
+
+        [Column("serial_no")]
+        [StringLength(100)]
+        public string SerialNo { get; set; } = string.Empty;
 
         [Column("co_id")]
         [StringLength(20)]

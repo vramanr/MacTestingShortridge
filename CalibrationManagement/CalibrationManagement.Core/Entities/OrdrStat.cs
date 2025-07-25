@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.EntityFrameworkCore;
 
 namespace CalibrationManagement.Core.Entities
 {
@@ -34,6 +35,10 @@ namespace CalibrationManagement.Core.Entities
 
         [Column("notes")]
         public string? Notes { get; set; }
+
+        [Column("total_amount")]
+        [Precision(12, 2)]
+        public decimal? TotalAmount { get; set; }
 
         [Column("created_date")]
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;

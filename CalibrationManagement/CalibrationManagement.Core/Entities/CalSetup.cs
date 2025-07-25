@@ -14,6 +14,21 @@ namespace CalibrationManagement.Core.Entities
         [StringLength(50)]
         public string? CalType { get; set; }
 
+        [Column("setup_name")]
+        [StringLength(100)]
+        public string? SetupName { get; set; }
+
+        [Column("setup_description")]
+        [StringLength(500)]
+        public string? SetupDescription { get; set; }
+
+        [Column("default_points")]
+        public int? DefaultPoints { get; set; }
+
+        [Column("default_units")]
+        [StringLength(20)]
+        public string? DefaultUnits { get; set; }
+
         [Column("mode")]
         [StringLength(50)]
         public string? Mode { get; set; }
@@ -31,6 +46,8 @@ namespace CalibrationManagement.Core.Entities
 
         [Column("active")]
         public bool Active { get; set; } = true;
+
+        public bool IsActive => Active;
 
         [Column("created_date")]
         public DateTime CreatedDate { get; set; } = DateTime.UtcNow;

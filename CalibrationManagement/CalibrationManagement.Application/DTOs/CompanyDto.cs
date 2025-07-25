@@ -20,6 +20,9 @@ namespace CalibrationManagement.Application.DTOs
         [StringLength(100)]
         public string? Address2 { get; set; }
         
+        [StringLength(200)]
+        public string? Address { get; set; }
+        
         [StringLength(50)]
         public string? City { get; set; }
         
@@ -68,6 +71,9 @@ namespace CalibrationManagement.Application.DTOs
         [StringLength(100)]
         public string? Address2 { get; set; }
         
+        [StringLength(200)]
+        public string? Address { get; set; }
+        
         [StringLength(50)]
         public string? City { get; set; }
         
@@ -76,6 +82,9 @@ namespace CalibrationManagement.Application.DTOs
         
         [StringLength(20)]
         public string? ZipCode { get; set; }
+        
+        [StringLength(20)]
+        public string? Zip { get; set; }
         
         [StringLength(20)]
         public string? Phone { get; set; }
@@ -111,6 +120,9 @@ namespace CalibrationManagement.Application.DTOs
         [StringLength(100)]
         public string? Address2 { get; set; }
         
+        [StringLength(200)]
+        public string? Address { get; set; }
+        
         [StringLength(50)]
         public string? City { get; set; }
         
@@ -119,6 +131,9 @@ namespace CalibrationManagement.Application.DTOs
         
         [StringLength(20)]
         public string? ZipCode { get; set; }
+        
+        [StringLength(20)]
+        public string? Zip { get; set; }
         
         [StringLength(20)]
         public string? Phone { get; set; }

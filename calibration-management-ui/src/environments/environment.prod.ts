@@ -1,4 +1,5 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://api.calibrationmanagement.com'
+  apiUrl: 'http://api:80',
+  apiBaseUrl: 'http://api:80/api'
 };

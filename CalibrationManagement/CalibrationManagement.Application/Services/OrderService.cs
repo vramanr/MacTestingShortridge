@@ -37,7 +37,7 @@ namespace CalibrationManagement.Application.Services
 
             order.CreatedDate = DateTime.UtcNow;
 
-            _context.Orders.Add(order);
+            _context.OrdrStats.Add(order);
             await _context.SaveChangesAsync();
 
             return order;
@@ -45,7 +45,7 @@ namespace CalibrationManagement.Application.Services
 
         public async Task<OrdrStat> UpdateOrderAsync(OrdrStat order)
         {
-            _context.Orders.Update(order);
+            _context.OrdrStats.Update(order);
             await _context.SaveChangesAsync();
 
             return order;
@@ -53,7 +53,7 @@ namespace CalibrationManagement.Application.Services
 
         public async Task<OrdrStat?> GetOrderByIdAsync(Guid orderId)
         {
-            return await _context.Orders
+            return await _context.OrdrStats
                 .Include(o => o.Company)
                 .Include(o => o.OrderDetails)
                 .FirstOrDefaultAsync(o => o.OrderId == orderId && !o.Deleted);
@@ -61,7 +61,7 @@ namespace CalibrationManagement.Application.Services
 
         public async Task<OrdrStat?> GetOrderByNumberAsync(string orderNo)
         {
-            return await _context.Orders
+            return await _context.OrdrStats
                 .Include(o => o.Company)
                 .Include(o => o.OrderDetails)
                 .FirstOrDefaultAsync(o => o.OrderNo == orderNo && !o.Deleted);
@@ -69,7 +69,7 @@ namespace CalibrationManagement.Application.Services
 
         public async Task<IEnumerable<OrdrStat>> GetOrdersByCompanyAsync(string coId)
         {
-            return await _context.Orders
+            return await _context.OrdrStats
                 .Include(o => o.Company)
                 .Where(o => o.CoId == coId && !o.Deleted)
                 .OrderByDescending(o => o.CreatedDate)
@@ -78,7 +78,7 @@ namespace CalibrationManagement.Application.Services
 
         public async Task<IEnumerable<OrdrStat>> GetOrdersByStatusAsync(string status)
         {
-            return await _context.Orders
+            return await _context.OrdrStats
                 .Include(o => o.Company)
                 .Where(o => o.Status == status && !o.Deleted)
                 .OrderByDescending(o => o.CreatedDate)
@@ -87,7 +87,7 @@ namespace CalibrationManagement.Application.Services
 
         public async Task<IEnumerable<OrdrStat>> GetOrdersByDateRangeAsync(DateTime startDate, DateTime endDate)
         {
-            return await _context.Orders
+            return await _context.OrdrStats
                 .Include(o => o.Company)
                 .Where(o => o.OrderDate >= startDate && o.OrderDate <= endDate && !o.Deleted)
                 .OrderByDescending(o => o.OrderDate)
@@ -96,7 +96,7 @@ namespace CalibrationManagement.Application.Services
 
         public async Task<bool> DeleteOrderAsync(Guid orderId)
         {
-            var order = await _context.Orders.FindAsync(orderId);
+            var order = await _context.OrdrStats.FindAsync(orderId);
             if (order == null)
                 return false;
 
@@ -127,7 +127,7 @@ namespace CalibrationManagement.Application.Services
         public async Task<string> GenerateOrderNumberAsync()
         {
             var year = DateTime.Now.Year.ToString();
-            var lastOrder = await _context.Orders
+            var lastOrder = await _context.OrdrStats
                 .Where(o => o.OrderNo.StartsWith(year))
                 .OrderByDescending(o => o.OrderNo)
                 .FirstOrDefaultAsync();

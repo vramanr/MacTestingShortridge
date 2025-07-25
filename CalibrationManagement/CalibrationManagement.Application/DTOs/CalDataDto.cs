@@ -10,6 +10,9 @@ namespace CalibrationManagement.Application.DTOs
         public Guid CalId { get; set; }
         
         [StringLength(50)]
+        public string? CalNo { get; set; }
+        
+        [StringLength(50)]
         public string? Mode { get; set; }
         
         public decimal? SetPoint { get; set; }

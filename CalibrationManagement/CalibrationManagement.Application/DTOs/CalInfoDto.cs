@@ -23,7 +23,7 @@ namespace CalibrationManagement.Application.DTOs
         public string? SerialNo { get; set; }
         
         [StringLength(100)]
-        public string? ModelNo { get; set; }
+        public string? ModelNumber { get; set; }
         
         public DateTime? CalDate { get; set; }
         
@@ -59,9 +59,15 @@ namespace CalibrationManagement.Application.DTOs
 
     public class CreateCalInfoDto
     {
+        [StringLength(50)]
+        public string? CalNo { get; set; }
+        
         [StringLength(20)]
         [CompanyCode]
         public string? CoId { get; set; }
+        
+        [StringLength(20)]
+        public string? CompanyId { get; set; }
         
         [StringLength(50)]
         [OrderNumber]
@@ -75,7 +81,7 @@ namespace CalibrationManagement.Application.DTOs
         [Required]
         [StringLength(100)]
         [ModelNumber]
-        public string ModelNo { get; set; } = string.Empty;
+        public string ModelNumber { get; set; } = string.Empty;
         
         public DateTime? CalDate { get; set; }
         
@@ -90,6 +96,9 @@ namespace CalibrationManagement.Application.DTOs
         
         [StringLength(20)]
         public string CalStatus { get; set; } = "PENDING";
+        
+        [StringLength(20)]
+        public string? Status { get; set; }
         
         public decimal? Temperature { get; set; }
         
@@ -113,6 +122,9 @@ namespace CalibrationManagement.Application.DTOs
         [CompanyCode]
         public string? CoId { get; set; }
         
+        [StringLength(20)]
+        public string? CompanyId { get; set; }
+        
         [StringLength(50)]
         [OrderNumber]
         public string? OrderNo { get; set; }
@@ -121,7 +133,7 @@ namespace CalibrationManagement.Application.DTOs
         public string? SerialNo { get; set; }
         
         [StringLength(100)]
-        public string? ModelNo { get; set; }
+        public string? ModelNumber { get; set; }
         
         public DateTime? CalDate { get; set; }
         
@@ -135,6 +147,9 @@ namespace CalibrationManagement.Application.DTOs
         
         [StringLength(20)]
         public string? CalStatus { get; set; }
+        
+        [StringLength(20)]
+        public string? Status { get; set; }
         
         public decimal? Temperature { get; set; }
         

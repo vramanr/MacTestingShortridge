@@ -17,7 +17,7 @@ namespace CalibrationManagement.Application.Mappings
                 .ForMember(dest => dest.Contacts, opt => opt.Ignore())
                 .ForMember(dest => dest.ModelNumbers, opt => opt.Ignore())
                 .ForMember(dest => dest.CalInfos, opt => opt.Ignore())
-                .ForMember(dest => dest.Orders, opt => opt.Ignore());
+                .ForMember(dest => dest.OrdrStats, opt => opt.Ignore());
             
             CreateMap<UpdateCompanyDto, Company>()
                 .ForMember(dest => dest.CreatedDate, opt => opt.Ignore())
@@ -26,7 +26,7 @@ namespace CalibrationManagement.Application.Mappings
                 .ForMember(dest => dest.Contacts, opt => opt.Ignore())
                 .ForMember(dest => dest.ModelNumbers, opt => opt.Ignore())
                 .ForMember(dest => dest.CalInfos, opt => opt.Ignore())
-                .ForMember(dest => dest.Orders, opt => opt.Ignore());
+                .ForMember(dest => dest.OrdrStats, opt => opt.Ignore());
 
             CreateMap<Contact, ContactDto>();
             CreateMap<CreateContactDto, Contact>()

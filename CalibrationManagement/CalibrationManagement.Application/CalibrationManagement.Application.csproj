@@ -2,11 +2,14 @@
 
   <ItemGroup>
     <ProjectReference Include="..\CalibrationManagement.Core\CalibrationManagement.Core.csproj" />
+    <ProjectReference Include="..\CalibrationManagement.Infrastructure\CalibrationManagement.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="AutoMapper" Version="15.0.1" />
+    <PackageReference Include="AutoMapper" Version="12.0.1" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
+    <PackageReference Include="itext7" Version="9.2.0" />
+    <PackageReference Include="itext7.bouncy-castle-adapter" Version="9.2.0" />
   </ItemGroup>
 
   <PropertyGroup>

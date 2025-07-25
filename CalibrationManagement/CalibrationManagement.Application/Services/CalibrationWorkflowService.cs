@@ -39,7 +39,7 @@ namespace CalibrationManagement.Application.Services
 
         public async Task<CalInfo> CreateCalibrationAsync(CalInfo calInfo)
         {
-            if (string.IsNullOrEmpty(calInfo.CalNo))
+            if (string.IsNullOrWhiteSpace(calInfo.CalNo))
             {
                 calInfo.CalNo = await GenerateCalibrationNumberAsync();
             }
@@ -47,7 +47,7 @@ namespace CalibrationManagement.Application.Services
             calInfo.CreatedDate = DateTime.UtcNow;
             calInfo.ModifiedDate = DateTime.UtcNow;
 
-            _context.CalInfos.Add(calInfo);
+            _context.CalInfo.Add(calInfo);
             await _context.SaveChangesAsync();
 
             return calInfo;
@@ -55,17 +55,39 @@ namespace CalibrationManagement.Application.Services
 
         public async Task<CalInfo> UpdateCalibrationAsync(CalInfo calInfo)
         {
-            calInfo.ModifiedDate = DateTime.UtcNow;
-            
-            _context.CalInfos.Update(calInfo);
+            var existingCalibration = await _context.CalInfo.FindAsync(calInfo.CalId);
+            if (existingCalibration == null)
+                throw new InvalidOperationException($"Calibration with ID {calInfo.CalId} not found");
+
+            existingCalibration.CalNo = calInfo.CalNo;
+            existingCalibration.OrderNo = calInfo.OrderNo;
+            existingCalibration.SerialNo = calInfo.SerialNo;
+            existingCalibration.ModelNumber = calInfo.ModelNumber;
+            existingCalibration.CalType = calInfo.CalType;
+            existingCalibration.CalStatus = calInfo.CalStatus;
+            existingCalibration.CalTech = calInfo.CalTech;
+            existingCalibration.CalDate = calInfo.CalDate;
+            existingCalibration.DueDate = calInfo.DueDate;
+            existingCalibration.CoId = calInfo.CoId;
+            existingCalibration.CompanyId = calInfo.CompanyId;
+            existingCalibration.Temperature = calInfo.Temperature;
+            existingCalibration.Humidity = calInfo.Humidity;
+            existingCalibration.Pressure = calInfo.Pressure;
+            existingCalibration.Notes = calInfo.Notes;
+            existingCalibration.Status = calInfo.Status;
+            existingCalibration.TestBy = calInfo.TestBy;
+            existingCalibration.AsrcdModNo = calInfo.AsrcdModNo;
+            existingCalibration.TestType = calInfo.TestType;
+            existingCalibration.ModifiedDate = DateTime.UtcNow;
+
             await _context.SaveChangesAsync();
 
-            return calInfo;
+            return existingCalibration;
         }
 
         public async Task<CalInfo?> GetCalibrationByIdAsync(Guid calId)
         {
-            return await _context.CalInfos
+            return await _context.CalInfo
                 .Include(c => c.Company)
                 .Include(c => c.CalData)
                 .Include(c => c.CalStandards)
@@ -74,7 +96,7 @@ namespace CalibrationManagement.Application.Services
 
         public async Task<CalInfo?> GetCalibrationByNumberAsync(string calNo)
         {
-            return await _context.CalInfos
+            return await _context.CalInfo
                 .Include(c => c.Company)
                 .Include(c => c.CalData)
                 .Include(c => c.CalStandards)
@@ -83,7 +105,7 @@ namespace CalibrationManagement.Application.Services
 
         public async Task<IEnumerable<CalInfo>> GetCalibrationsByCompanyAsync(string coId)
         {
-            return await _context.CalInfos
+            return await _context.CalInfo
                 .Include(c => c.Company)
                 .Where(c => c.CoId == coId && !c.Deleted)
                 .OrderByDescending(c => c.CreatedDate)
@@ -92,7 +114,7 @@ namespace CalibrationManagement.Application.Services
 
         public async Task<IEnumerable<CalInfo>> GetCalibrationsByOrderAsync(string orderNo)
         {
-            return await _context.CalInfos
+            return await _context.CalInfo
                 .Include(c => c.Company)
                 .Where(c => c.OrderNo == orderNo && !c.Deleted)
                 .OrderByDescending(c => c.CreatedDate)
@@ -101,7 +123,7 @@ namespace CalibrationManagement.Application.Services
 
         public async Task<IEnumerable<CalInfo>> GetCalibrationsByStatusAsync(string status)
         {
-            return await _context.CalInfos
+            return await _context.CalInfo
                 .Include(c => c.Company)
                 .Where(c => c.CalStatus == status && !c.Deleted)
                 .OrderByDescending(c => c.CreatedDate)
@@ -110,7 +132,7 @@ namespace CalibrationManagement.Application.Services
 
         public async Task<IEnumerable<CalInfo>> GetCalibrationsByTechnicianAsync(string techId)
         {
-            return await _context.CalInfos
+            return await _context.CalInfo
                 .Include(c => c.Company)
                 .Where(c => c.CalTech == techId && !c.Deleted)
                 .OrderByDescending(c => c.CreatedDate)
@@ -119,7 +141,7 @@ namespace CalibrationManagement.Application.Services
 
         public async Task<IEnumerable<CalInfo>> GetCalibrationsByDateRangeAsync(DateTime startDate, DateTime endDate)
         {
-            return await _context.CalInfos
+            return await _context.CalInfo
                 .Include(c => c.Company)
                 .Where(c => c.CalDate >= startDate && c.CalDate <= endDate && !c.Deleted)
                 .OrderByDescending(c => c.CalDate)
@@ -130,12 +152,12 @@ namespace CalibrationManagement.Application.Services
         {
             var term = searchTerm.ToLower();
             
-            return await _context.CalInfos
+            return await _context.CalInfo
                 .Include(c => c.Company)
                 .Where(c => !c.Deleted && (
                     c.CalNo.ToLower().Contains(term) ||
                     c.SerialNo!.ToLower().Contains(term) ||
-                    c.ModelNo!.ToLower().Contains(term) ||
+                    c.ModelNumber!.ToLower().Contains(term) ||
                     c.Company!.CoName!.ToLower().Contains(term)
                 ))
                 .OrderByDescending(c => c.CreatedDate)
@@ -144,7 +166,7 @@ namespace CalibrationManagement.Application.Services
 
         public async Task<bool> DeleteCalibrationAsync(Guid calId)
         {
-            var calibration = await _context.CalInfos.FindAsync(calId);
+            var calibration = await _context.CalInfo.FindAsync(calId);
             if (calibration == null)
                 return false;
 
@@ -241,7 +263,7 @@ namespace CalibrationManagement.Application.Services
         public async Task<string> GenerateCalibrationNumberAsync()
         {
             var year = DateTime.Now.Year.ToString();
-            var lastCal = await _context.CalInfos
+            var lastCal = await _context.CalInfo
                 .Where(c => c.CalNo.StartsWith(year))
                 .OrderByDescending(c => c.CalNo)
                 .FirstOrDefaultAsync();

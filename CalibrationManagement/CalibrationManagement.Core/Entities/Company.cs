@@ -19,9 +19,17 @@ namespace CalibrationManagement.Core.Entities
         [StringLength(200)]
         public string? CoName { get; set; }
 
+        [Column("name")]
+        [StringLength(200)]
+        public string? Name { get; set; }
+
         [Column("address1")]
         [StringLength(100)]
         public string? Address1 { get; set; }
+
+        [Column("address")]
+        [StringLength(100)]
+        public string? Address { get; set; }
 
         [Column("address2")]
         [StringLength(100)]
@@ -38,6 +46,18 @@ namespace CalibrationManagement.Core.Entities
         [Column("zip")]
         [StringLength(20)]
         public string? Zip { get; set; }
+
+        [Column("zip_code")]
+        [StringLength(20)]
+        public string? ZipCode { get; set; }
+
+        [Column("tax_rate")]
+        [Precision(5, 4)]
+        public decimal? TaxRate { get; set; }
+
+        [Column("discount_rate")]
+        [Precision(5, 4)]
+        public decimal? DiscountRate { get; set; }
 
         [Column("country")]
         [StringLength(50)]
@@ -91,9 +111,17 @@ namespace CalibrationManagement.Core.Entities
         [Column("deleted")]
         public bool Deleted { get; set; } = false;
 
+        [Column("s_city")]
+        [StringLength(100)]
+        public string? SCity { get; set; }
+
+        [Column("s_state")]
+        [StringLength(50)]
+        public string? SState { get; set; }
+
         public virtual ICollection<CalInfo> CalInfos { get; set; } = new List<CalInfo>();
         public virtual ICollection<Contact> Contacts { get; set; } = new List<Contact>();
-        public virtual ICollection<OrdrStat> Orders { get; set; } = new List<OrdrStat>();
+        public virtual ICollection<OrdrStat> OrdrStats { get; set; } = new List<OrdrStat>();
         public virtual ICollection<ModelNo> ModelNumbers { get; set; } = new List<ModelNo>();
         public virtual ICollection<Invoice> Invoices { get; set; } = new List<Invoice>();
     }

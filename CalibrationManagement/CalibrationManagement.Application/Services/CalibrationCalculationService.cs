@@ -8,6 +8,14 @@ namespace CalibrationManagement.Application.Services
         string Justification(string reading);
         string SetPointDecimal(string reading, string setPoint, string mode, decimal deviation, string type, string calType);
         string PadZero(string reading, string setPoint);
+        decimal CalculatePercentageDeviation(decimal actual, decimal expected);
+        decimal CalculateAbsoluteDeviation(decimal actual, decimal expected);
+        bool IsWithinTolerance(decimal actual, decimal expected, decimal tolerance);
+        string DetermineCalibrationStatus(decimal deviation, decimal tolerance);
+        decimal CalculateDewPoint(decimal temperature, decimal humidity);
+        decimal ConvertFahrenheitToCelsius(decimal fahrenheit);
+        decimal ConvertCelsiusToFahrenheit(decimal celsius);
+        decimal ConvertPsiToMillibar(decimal psi);
     }
 
     public class CalibrationCalculationService : ICalibrationCalculationService
@@ -214,6 +222,58 @@ namespace CalibrationManagement.Application.Services
             }
 
             return cReading.Trim();
+        }
+
+        public decimal CalculatePercentageDeviation(decimal actual, decimal expected)
+        {
+            if (expected == 0)
+                return 0;
+            
+            return Math.Abs((actual - expected) / expected) * 100;
+        }
+
+        public decimal CalculateAbsoluteDeviation(decimal actual, decimal expected)
+        {
+            return Math.Abs(actual - expected);
+        }
+
+        public bool IsWithinTolerance(decimal actual, decimal expected, decimal tolerance)
+        {
+            var deviation = CalculateAbsoluteDeviation(actual, expected);
+            return deviation <= tolerance;
+        }
+
+        public string DetermineCalibrationStatus(decimal deviation, decimal tolerance)
+        {
+            if (deviation <= tolerance)
+                return "PASS";
+            else if (deviation <= tolerance * 1.5m)
+                return "LIMITED";
+            else
+                return "FAIL";
+        }
+
+        public decimal CalculateDewPoint(decimal temperature, decimal humidity)
+        {
+            var a = 17.27m;
+            var b = 237.7m;
+            var alpha = ((a * temperature) / (b + temperature)) + (decimal)Math.Log((double)(humidity / 100));
+            return (b * alpha) / (a - alpha);
+        }
+
+        public decimal ConvertFahrenheitToCelsius(decimal fahrenheit)
+        {
+            return (fahrenheit - 32) * 5 / 9;
+        }
+
+        public decimal ConvertCelsiusToFahrenheit(decimal celsius)
+        {
+            return (celsius * 9 / 5) + 32;
+        }
+
+        public decimal ConvertPsiToMillibar(decimal psi)
+        {
+            return psi * 68.9476m;
         }
     }
 }

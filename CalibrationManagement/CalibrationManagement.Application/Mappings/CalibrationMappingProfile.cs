@@ -11,7 +11,6 @@ namespace CalibrationManagement.Application.Mappings
             CreateMap<CalInfo, CalInfoDto>();
             CreateMap<CreateCalInfoDto, CalInfo>()
                 .ForMember(dest => dest.CalId, opt => opt.Ignore())
-                .ForMember(dest => dest.CalNo, opt => opt.Ignore())
                 .ForMember(dest => dest.CreatedDate, opt => opt.Ignore())
                 .ForMember(dest => dest.ModifiedDate, opt => opt.Ignore())
                 .ForMember(dest => dest.Deleted, opt => opt.Ignore())

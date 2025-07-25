@@ -44,57 +44,64 @@ namespace CalibrationManagement.API.Controllers
         }
 
         [HttpGet("by-number/{calNo}")]
-        public async Task<ActionResult<CalInfo>> GetCalibrationByNumber(string calNo)
+        public async Task<ActionResult<CalInfoDto>> GetCalibrationByNumber(string calNo)
         {
             var calibration = await _calibrationService.GetCalibrationByNumberAsync(calNo);
             if (calibration == null)
                 return NotFound();
 
-            return Ok(calibration);
+            var calibrationDto = _mapper.Map<CalInfoDto>(calibration);
+            return Ok(calibrationDto);
         }
 
         [HttpGet("by-company/{coId}")]
-        public async Task<ActionResult<IEnumerable<CalInfo>>> GetCalibrationsByCompany(string coId)
+        public async Task<ActionResult<IEnumerable<CalInfoDto>>> GetCalibrationsByCompany(string coId)
         {
             var calibrations = await _calibrationService.GetCalibrationsByCompanyAsync(coId);
-            return Ok(calibrations);
+            var calibrationDtos = _mapper.Map<IEnumerable<CalInfoDto>>(calibrations);
+            return Ok(calibrationDtos);
         }
 
         [HttpGet("by-order/{orderNo}")]
-        public async Task<ActionResult<IEnumerable<CalInfo>>> GetCalibrationsByOrder(string orderNo)
+        public async Task<ActionResult<IEnumerable<CalInfoDto>>> GetCalibrationsByOrder(string orderNo)
         {
             var calibrations = await _calibrationService.GetCalibrationsByOrderAsync(orderNo);
-            return Ok(calibrations);
+            var calibrationDtos = _mapper.Map<IEnumerable<CalInfoDto>>(calibrations);
+            return Ok(calibrationDtos);
         }
 
         [HttpGet("by-status/{status}")]
-        public async Task<ActionResult<IEnumerable<CalInfo>>> GetCalibrationsByStatus(string status)
+        public async Task<ActionResult<IEnumerable<CalInfoDto>>> GetCalibrationsByStatus(string status)
         {
             var calibrations = await _calibrationService.GetCalibrationsByStatusAsync(status);
-            return Ok(calibrations);
+            var calibrationDtos = _mapper.Map<IEnumerable<CalInfoDto>>(calibrations);
+            return Ok(calibrationDtos);
         }
 
         [HttpGet("by-technician/{techId}")]
-        public async Task<ActionResult<IEnumerable<CalInfo>>> GetCalibrationsByTechnician(string techId)
+        public async Task<ActionResult<IEnumerable<CalInfoDto>>> GetCalibrationsByTechnician(string techId)
         {
             var calibrations = await _calibrationService.GetCalibrationsByTechnicianAsync(techId);
-            return Ok(calibrations);
+            var calibrationDtos = _mapper.Map<IEnumerable<CalInfoDto>>(calibrations);
+            return Ok(calibrationDtos);
         }
 
         [HttpGet("by-date-range")]
-        public async Task<ActionResult<IEnumerable<CalInfo>>> GetCalibrationsByDateRange(
+        public async Task<ActionResult<IEnumerable<CalInfoDto>>> GetCalibrationsByDateRange(
             [FromQuery] DateTime startDate, 
             [FromQuery] DateTime endDate)
         {
             var calibrations = await _calibrationService.GetCalibrationsByDateRangeAsync(startDate, endDate);
-            return Ok(calibrations);
+            var calibrationDtos = _mapper.Map<IEnumerable<CalInfoDto>>(calibrations);
+            return Ok(calibrationDtos);
         }
 
         [HttpGet("search")]
-        public async Task<ActionResult<IEnumerable<CalInfo>>> SearchCalibrations([FromQuery] string searchTerm)
+        public async Task<ActionResult<IEnumerable<CalInfoDto>>> SearchCalibrations([FromQuery] string searchTerm)
         {
             var calibrations = await _calibrationService.SearchCalibrationsAsync(searchTerm ?? "");
-            return Ok(calibrations);
+            var calibrationDtos = _mapper.Map<IEnumerable<CalInfoDto>>(calibrations);
+            return Ok(calibrationDtos);
         }
 
         [HttpPost]
@@ -141,10 +148,11 @@ namespace CalibrationManagement.API.Controllers
         }
 
         [HttpGet("{id}/data")]
-        public async Task<ActionResult<IEnumerable<CalData>>> GetCalibrationData(Guid id)
+        public async Task<ActionResult<IEnumerable<CalDataDto>>> GetCalibrationData(Guid id)
         {
             var calData = await _calibrationService.GetCalibrationDataAsync(id);
-            return Ok(calData);
+            var calDataDtos = _mapper.Map<IEnumerable<CalDataDto>>(calData);
+            return Ok(calDataDtos);
         }
 
         [HttpPost("{id}/data")]

@@ -1,0 +1,424 @@
+{
+  "format": 1,
+  "restore": {
+    "/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.Tests/CalibrationManagement.Tests.csproj": {}
+  },
+  "projects": {
+    "/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.API/CalibrationManagement.API.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.API/CalibrationManagement.API.csproj",
+        "projectName": "CalibrationManagement.API",
+        "projectPath": "/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.API/CalibrationManagement.API.csproj",
+        "packagesPath": "/home/ubuntu/.nuget/packages/",
+        "outputPath": "/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.API/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/ubuntu/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.Application/CalibrationManagement.Application.csproj": {
+                "projectPath": "/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.Application/CalibrationManagement.Application.csproj"
+              },
+              "/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.Infrastructure/CalibrationManagement.Infrastructure.csproj": {
+                "projectPath": "/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.Infrastructure/CalibrationManagement.Infrastructure.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "Microsoft.AspNetCore.OpenApi": {
+              "target": "Package",
+              "version": "[8.0.18, )"
+            },
+            "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[9.0.7, )"
+            },
+            "Swashbuckle.AspNetCore": {
+              "target": "Package",
+              "version": "[6.6.2, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.AspNetCore.App": {
+              "privateAssets": "none"
+            },
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.412/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.Application/CalibrationManagement.Application.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.Application/CalibrationManagement.Application.csproj",
+        "projectName": "CalibrationManagement.Application",
+        "projectPath": "/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.Application/CalibrationManagement.Application.csproj",
+        "packagesPath": "/home/ubuntu/.nuget/packages/",
+        "outputPath": "/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.Application/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/ubuntu/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.Core/CalibrationManagement.Core.csproj": {
+                "projectPath": "/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.Core/CalibrationManagement.Core.csproj"
+              },
+              "/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.Infrastructure/CalibrationManagement.Infrastructure.csproj": {
+                "projectPath": "/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.Infrastructure/CalibrationManagement.Infrastructure.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "AutoMapper": {
+              "target": "Package",
+              "version": "[12.0.1, )"
+            },
+            "AutoMapper.Extensions.Microsoft.DependencyInjection": {
+              "target": "Package",
+              "version": "[12.0.1, )"
+            },
+            "itext7": {
+              "target": "Package",
+              "version": "[9.2.0, )"
+            },
+            "itext7.bouncy-castle-adapter": {
+              "target": "Package",
+              "version": "[9.2.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.412/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.Core/CalibrationManagement.Core.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.Core/CalibrationManagement.Core.csproj",
+        "projectName": "CalibrationManagement.Core",
+        "projectPath": "/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.Core/CalibrationManagement.Core.csproj",
+        "packagesPath": "/home/ubuntu/.nuget/packages/",
+        "outputPath": "/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.Core/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/ubuntu/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "Microsoft.EntityFrameworkCore": {
+              "target": "Package",
+              "version": "[9.0.7, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.412/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.Infrastructure/CalibrationManagement.Infrastructure.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.Infrastructure/CalibrationManagement.Infrastructure.csproj",
+        "projectName": "CalibrationManagement.Infrastructure",
+        "projectPath": "/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.Infrastructure/CalibrationManagement.Infrastructure.csproj",
+        "packagesPath": "/home/ubuntu/.nuget/packages/",
+        "outputPath": "/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.Infrastructure/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/ubuntu/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.Core/CalibrationManagement.Core.csproj": {
+                "projectPath": "/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.Core/CalibrationManagement.Core.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "Microsoft.EntityFrameworkCore.Design": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[9.0.7, )"
+            },
+            "Microsoft.EntityFrameworkCore.Tools": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[9.0.7, )"
+            },
+            "Npgsql.EntityFrameworkCore.PostgreSQL": {
+              "target": "Package",
+              "version": "[9.0.4, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.412/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.Tests/CalibrationManagement.Tests.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.Tests/CalibrationManagement.Tests.csproj",
+        "projectName": "CalibrationManagement.Tests",
+        "projectPath": "/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.Tests/CalibrationManagement.Tests.csproj",
+        "packagesPath": "/home/ubuntu/.nuget/packages/",
+        "outputPath": "/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.Tests/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/home/ubuntu/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net8.0"
+        ],
+        "sources": {
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net8.0": {
+            "targetAlias": "net8.0",
+            "projectReferences": {
+              "/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.API/CalibrationManagement.API.csproj": {
+                "projectPath": "/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.API/CalibrationManagement.API.csproj"
+              },
+              "/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.Application/CalibrationManagement.Application.csproj": {
+                "projectPath": "/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.Application/CalibrationManagement.Application.csproj"
+              },
+              "/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.Core/CalibrationManagement.Core.csproj": {
+                "projectPath": "/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.Core/CalibrationManagement.Core.csproj"
+              },
+              "/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.Infrastructure/CalibrationManagement.Infrastructure.csproj": {
+                "projectPath": "/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.Infrastructure/CalibrationManagement.Infrastructure.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        }
+      },
+      "frameworks": {
+        "net8.0": {
+          "targetAlias": "net8.0",
+          "dependencies": {
+            "FluentAssertions": {
+              "target": "Package",
+              "version": "[8.5.0, )"
+            },
+            "Microsoft.AspNetCore.Mvc.Testing": {
+              "target": "Package",
+              "version": "[8.0.11, )"
+            },
+            "Microsoft.EntityFrameworkCore.InMemory": {
+              "target": "Package",
+              "version": "[9.0.7, )"
+            },
+            "Microsoft.NET.Test.Sdk": {
+              "target": "Package",
+              "version": "[17.8.0, )"
+            },
+            "Moq": {
+              "target": "Package",
+              "version": "[4.20.72, )"
+            },
+            "coverlet.collector": {
+              "target": "Package",
+              "version": "[6.0.0, )"
+            },
+            "xunit": {
+              "target": "Package",
+              "version": "[2.5.3, )"
+            },
+            "xunit.runner.visualstudio": {
+              "target": "Package",
+              "version": "[2.5.3, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/share/dotnet/sdk/8.0.412/PortableRuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

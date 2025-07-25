@@ -18,6 +18,13 @@ namespace CalibrationManagement.Core.Entities
         [StringLength(50)]
         public string? FirstName { get; set; }
 
+        [Column("contact_name")]
+        [StringLength(100)]
+        public string? ContactName { get; set; }
+
+        [Column("is_primary")]
+        public bool? IsPrimary { get; set; }
+
         [Column("last_name")]
         [StringLength(50)]
         public string? LastName { get; set; }

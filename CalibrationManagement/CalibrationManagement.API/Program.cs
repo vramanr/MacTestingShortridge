@@ -3,7 +3,13 @@ using CalibrationManagement.Application.Services;
 using CalibrationManagement.Application.Mappings;
 using Microsoft.EntityFrameworkCore;
 
-var builder = WebApplication.CreateBuilder(args);
+namespace CalibrationManagement.API
+{
+    public class Program
+    {
+        public static void Main(string[] args)
+        {
+            var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddDbContext<CalibrationDbContext>(options =>
@@ -48,4 +54,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-app.Run();
+            app.Run();
+        }
+    }
+}

@@ -33,7 +33,7 @@ namespace CalibrationManagement.Application.Services
             company.CreatedDate = DateTime.UtcNow;
             company.ModifiedDate = DateTime.UtcNow;
 
-            _context.Companies.Add(company);
+            _context.Company.Add(company);
             await _context.SaveChangesAsync();
 
             return company;
@@ -41,17 +41,32 @@ namespace CalibrationManagement.Application.Services
 
         public async Task<Company> UpdateCompanyAsync(Company company)
         {
-            company.ModifiedDate = DateTime.UtcNow;
-            
-            _context.Companies.Update(company);
+            var existingCompany = await _context.Company.FindAsync(company.CompanyId);
+            if (existingCompany == null)
+                throw new InvalidOperationException($"Company with ID {company.CompanyId} not found");
+
+            existingCompany.CoId = company.CoId;
+            existingCompany.CoName = company.CoName;
+            existingCompany.Address = company.Address;
+            existingCompany.City = company.City;
+            existingCompany.State = company.State;
+            existingCompany.Zip = company.Zip;
+            existingCompany.Phone = company.Phone;
+            existingCompany.Fax = company.Fax;
+            existingCompany.Email = company.Email;
+            existingCompany.SCity = company.SCity;
+            existingCompany.SState = company.SState;
+            existingCompany.Active = company.Active;
+            existingCompany.ModifiedDate = DateTime.UtcNow;
+
             await _context.SaveChangesAsync();
 
-            return company;
+            return existingCompany;
         }
 
         public async Task<Company?> GetCompanyByIdAsync(Guid companyId)
         {
-            return await _context.Companies
+            return await _context.Company
                 .Include(c => c.Contacts)
                 .Include(c => c.ModelNumbers)
                 .FirstOrDefaultAsync(c => c.CompanyId == companyId && !c.Deleted);
@@ -59,7 +74,7 @@ namespace CalibrationManagement.Application.Services
 
         public async Task<Company?> GetCompanyByCoIdAsync(string coId)
         {
-            return await _context.Companies
+            return await _context.Company
                 .Include(c => c.Contacts)
                 .Include(c => c.ModelNumbers)
                 .FirstOrDefaultAsync(c => c.CoId == coId && !c.Deleted);
@@ -67,7 +82,7 @@ namespace CalibrationManagement.Application.Services
 
         public async Task<IEnumerable<Company>> GetAllCompaniesAsync()
         {
-            return await _context.Companies
+            return await _context.Company
                 .Where(c => !c.Deleted && c.Active)
                 .OrderBy(c => c.CoName)
                 .ToListAsync();
@@ -77,7 +92,7 @@ namespace CalibrationManagement.Application.Services
         {
             var term = searchTerm.ToLower();
             
-            return await _context.Companies
+            return await _context.Company
                 .Where(c => !c.Deleted && (
                     c.CoId.ToLower().Contains(term) ||
                     c.CoName!.ToLower().Contains(term) ||
@@ -90,7 +105,7 @@ namespace CalibrationManagement.Application.Services
 
         public async Task<bool> DeleteCompanyAsync(Guid companyId)
         {
-            var company = await _context.Companies.FindAsync(companyId);
+            var company = await _context.Company.FindAsync(companyId);
             if (company == null)
                 return false;
 
@@ -114,7 +129,7 @@ namespace CalibrationManagement.Application.Services
         public async Task<IEnumerable<Contact>> GetCompanyContactsAsync(string coId)
         {
             return await _context.Contacts
-                .Where(c => c.CoId == coId && !c.Deleted && c.Active)
+                .Where(c => c.CoId == coId && !c.Deleted && (c.Active == true || c.Active == null))
                 .OrderBy(c => c.ContactName)
                 .ToListAsync();
         }
@@ -132,8 +147,8 @@ namespace CalibrationManagement.Application.Services
         public async Task<IEnumerable<ModelNo>> GetCompanyModelNumbersAsync(string coId)
         {
             return await _context.ModelNumbers
-                .Where(m => m.CoId == coId && !m.Deleted && m.Active)
-                .OrderBy(m => m.ModelNo)
+                .Where(m => m.CoId == coId && !m.Deleted && (m.Active == true || m.Active == null))
+                .OrderBy(m => m.ModelNumber)
                 .ToListAsync();
         }
     }

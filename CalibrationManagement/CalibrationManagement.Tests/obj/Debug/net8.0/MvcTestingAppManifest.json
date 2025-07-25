@@ -1,0 +1,6 @@
+{
+  "CalibrationManagement.API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "\/home\/ubuntu\/repos\/MacTestingShortridge\/CalibrationManagement\/CalibrationManagement.API",
+  "CalibrationManagement.Application, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "\/home\/ubuntu\/repos\/MacTestingShortridge\/CalibrationManagement\/CalibrationManagement.Application",
+  "CalibrationManagement.Core, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "\/home\/ubuntu\/repos\/MacTestingShortridge\/CalibrationManagement\/CalibrationManagement.Core",
+  "CalibrationManagement.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null": "\/home\/ubuntu\/repos\/MacTestingShortridge\/CalibrationManagement\/CalibrationManagement.Infrastructure"
+}

@@ -78,15 +78,15 @@
             <div class="instrument-info">
               <div class="info-row">
                 <span class="label">Model Number:</span>
-                <span class="value">{{ certificateData.modelNumber }}</span>
+                <span class="value">{{ certificateData?.modelNumber }}</span>
               </div>
               <div class="info-row">
                 <span class="label">Serial Number:</span>
-                <span class="value">{{ certificateData.serialNumber }}</span>
+                <span class="value">{{ certificateData?.serialNumber }}</span>
               </div>
               <div class="info-row">
                 <span class="label">Calibration Date:</span>
-                <span class="value">{{ certificateData.calibrationDate }}</span>
+                <span class="value">{{ certificateData?.calibrationDate }}</span>
               </div>
             </div>
           </div>
@@ -126,15 +126,15 @@
           <div class="procedure-info">
             <div class="info-row">
               <span class="label">Procedure Used:</span>
-              <span class="value">{{ certificateData.testType }}</span>
+              <span class="value">{{ certificateData?.testType }}</span>
             </div>
             <div class="info-row">
               <span class="label">Calibrated By:</span>
-              <span class="value">{{ certificateData.testBy }}</span>
+              <span class="value">{{ certificateData?.testBy }}</span>
             </div>
             <div class="info-row">
               <span class="label">Date:</span>
-              <span class="value">{{ certificateData.calibrationDate }}</span>
+              <span class="value">{{ certificateData?.calibrationDate }}</span>
             </div>
           </div>
 
@@ -153,7 +153,7 @@
           <!-- Footer -->
           <div class="certificate-footer">
             <p>This certificate is valid only for the instrument identified above and only under the conditions specified.</p>
-            <p>Calibration Number: {{ certificateData.calNo }}</p>
+            <p>Calibration Number: {{ certificateData?.calNo }}</p>
           </div>
         </div>
       </div>

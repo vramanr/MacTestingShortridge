@@ -1,9 +1,25 @@
 import { Component, OnInit } from '@angular/core';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { CommonModule } from '@angular/common';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatTableModule } from '@angular/material/table';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatIconModule } from '@angular/material/icon';
 import { ReportService, StandardsReportData } from '../services/report.service';
 
 @Component({
   selector: 'app-standards-report',
+  standalone: true,
+  imports: [
+    CommonModule,
+    MatCardModule,
+    MatButtonModule,
+    MatTableModule,
+    MatProgressSpinnerModule,
+    MatIconModule,
+    MatSnackBarModule
+  ],
   templateUrl: './standards-report.html',
   styleUrls: ['./standards-report.scss']
 })
@@ -11,6 +27,7 @@ export class StandardsReport implements OnInit {
   isGenerating = false;
   standardsData: StandardsReportData[] = [];
   previewMode = false;
+  currentDate = new Date().toLocaleDateString();
 
   displayedColumns: string[] = [
     'name', 'sensor', 'model', 'serialNumber', 'calibrationDate', 

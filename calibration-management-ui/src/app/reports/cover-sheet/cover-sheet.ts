@@ -1,6 +1,14 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ReactiveFormsModule } from '@angular/forms';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatIconModule } from '@angular/material/icon';
 import { ReportService } from '../services/report.service';
 
 export interface CoverSheetData {
@@ -16,6 +24,18 @@ export interface CoverSheetData {
 
 @Component({
   selector: 'app-cover-sheet',
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatCardModule,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatProgressSpinnerModule,
+    MatIconModule,
+    MatSnackBarModule
+  ],
   templateUrl: './cover-sheet.html',
   styleUrls: ['./cover-sheet.scss']
 })
@@ -24,6 +44,7 @@ export class CoverSheet implements OnInit {
   isGenerating = false;
   coverSheetData: CoverSheetData | null = null;
   previewMode = false;
+  currentDate = new Date().toLocaleDateString();
 
   constructor(
     private fb: FormBuilder,

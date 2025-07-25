@@ -112,6 +112,9 @@
             "projectReferences": {
               "/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.Core/CalibrationManagement.Core.csproj": {
                 "projectPath": "/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.Core/CalibrationManagement.Core.csproj"
+              },
+              "/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.Infrastructure/CalibrationManagement.Infrastructure.csproj": {
+                "projectPath": "/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.Infrastructure/CalibrationManagement.Infrastructure.csproj"
               }
             }
           }
@@ -130,6 +133,24 @@
       "frameworks": {
         "net8.0": {
           "targetAlias": "net8.0",
+          "dependencies": {
+            "AutoMapper": {
+              "target": "Package",
+              "version": "[12.0.1, )"
+            },
+            "AutoMapper.Extensions.Microsoft.DependencyInjection": {
+              "target": "Package",
+              "version": "[12.0.1, )"
+            },
+            "itext7": {
+              "target": "Package",
+              "version": "[9.2.0, )"
+            },
+            "itext7.bouncy-castle-adapter": {
+              "target": "Package",
+              "version": "[9.2.0, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",

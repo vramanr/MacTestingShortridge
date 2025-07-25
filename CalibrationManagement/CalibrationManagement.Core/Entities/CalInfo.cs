@@ -19,6 +19,10 @@ namespace CalibrationManagement.Core.Entities
         [StringLength(20)]
         public string? CoId { get; set; }
 
+        [Column("company_id")]
+        [StringLength(20)]
+        public string? CompanyId { get; set; }
+
         [Column("order_no")]
         [StringLength(50)]
         public string? OrderNo { get; set; }
@@ -26,6 +30,10 @@ namespace CalibrationManagement.Core.Entities
         [Column("serial_no")]
         [StringLength(100)]
         public string? SerialNo { get; set; }
+
+        [Column("model_no")]
+        [StringLength(100)]
+        public string? ModelNumber { get; set; }
 
         [Column("model_no")]
         [StringLength(100)]
@@ -45,9 +53,17 @@ namespace CalibrationManagement.Core.Entities
         [StringLength(50)]
         public string? CalTech { get; set; }
 
+        [Column("tech_id")]
+        [StringLength(20)]
+        public string? TechId { get; set; }
+
         [Column("cal_status")]
         [StringLength(20)]
         public string? CalStatus { get; set; }
+
+        [Column("status")]
+        [StringLength(20)]
+        public string? Status { get; set; }
 
         [Column("temperature")]
         [Precision(8, 2)]
@@ -72,6 +88,18 @@ namespace CalibrationManagement.Core.Entities
 
         [Column("deleted")]
         public bool Deleted { get; set; } = false;
+
+        [Column("test_by")]
+        [StringLength(100)]
+        public string? TestBy { get; set; }
+
+        [Column("asrcd_mod_no")]
+        [StringLength(100)]
+        public string? AsrcdModNo { get; set; }
+
+        [Column("test_type")]
+        [StringLength(50)]
+        public string? TestType { get; set; }
 
         public virtual Company? Company { get; set; }
         public virtual ICollection<CalData> CalData { get; set; } = new List<CalData>();
