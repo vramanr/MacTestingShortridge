@@ -1,0 +1,12 @@
+/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.Core/obj/Debug/net8.0/CalibrationManagement.Core.GeneratedMSBuildEditorConfig.editorconfig
+/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.Core/obj/Debug/net8.0/CalibrationManagement.Core.AssemblyInfoInputs.cache
+/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.Core/obj/Debug/net8.0/CalibrationManagement.Core.AssemblyInfo.cs
+/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.Core/obj/Debug/net8.0/CalibrationManagement.Core.csproj.CoreCompileInputs.cache
+/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.Core/obj/Debug/net8.0/CalibrationManagement.Core.csproj.AssemblyReference.cache
+/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.Core/bin/Debug/net8.0/CalibrationManagement.Core.deps.json
+/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.Core/bin/Debug/net8.0/CalibrationManagement.Core.dll
+/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.Core/bin/Debug/net8.0/CalibrationManagement.Core.pdb
+/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.Core/obj/Debug/net8.0/CalibrationManagement.Core.dll
+/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.Core/obj/Debug/net8.0/refint/CalibrationManagement.Core.dll
+/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.Core/obj/Debug/net8.0/CalibrationManagement.Core.pdb
+/home/ubuntu/repos/MacTestingShortridge/CalibrationManagement/CalibrationManagement.Core/obj/Debug/net8.0/ref/CalibrationManagement.Core.dll
